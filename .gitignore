@@ -1,0 +1,26 @@
+# Dependencies
+**/node_modules/
+node_modules/
+
+# Next.js build
+**/.next/
+.next/
+
+# Production build
+**/build/
+**/dist/
+
+# Env files
+.env*
+**/env.local
+
+# IDEs & System files
+.DS_Store
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.tsbuildinfo

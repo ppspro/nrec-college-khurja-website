@@ -1,0 +1,121 @@
+name: API Health Test
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'backend/**'
+
+jobs:
+  api-test:
+    name: Backend API Tests
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      NODE_ENV: test
+      PORT: 5000
+      MONGODB_URI: mongodb://localhost:27017/nrec_test
+      JWT_SECRET: test-jwt-secret-for-ci-only
+      UPLOAD_DIR: ./uploads
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build backend
+        run: npm run build
+
+      - name: Start backend server in background
+        run: node dist/index.js &
+        env:
+          NODE_ENV: test
+
+      - name: Wait for backend to be ready
+        run: |
+          for i in $(seq 1 15); do
+            if curl -sf http://localhost:5000/api/health; then
+              echo "Backend is up!"
+              break
+            fi
+            echo "Waiting... attempt $i"
+            sleep 2
+          done
+
+      - name: Test – Health endpoint
+        run: |
+          RESPONSE=$(curl -sf http://localhost:5000/api/health)
+          echo "Health response: $RESPONSE"
+          echo "$RESPONSE" | grep -q '"status":"healthy"'
+          echo "✓ Health check passed"
+
+      - name: Test – Departments endpoint (list)
+        run: |
+          RESPONSE=$(curl -sf http://localhost:5000/api/departments)
+          echo "Departments response: $RESPONSE"
+          # Should return an array or object
+          echo "$RESPONSE" | grep -qE '(\[|\{)'
+          echo "✓ Departments endpoint accessible"
+
+      - name: Test – Courses endpoint (list)
+        run: |
+          RESPONSE=$(curl -sf http://localhost:5000/api/courses)
+          echo "Courses response: $RESPONSE"
+          echo "$RESPONSE" | grep -qE '(\[|\{)'
+          echo "✓ Courses endpoint accessible"
+
+      - name: Test – Faculty endpoint (list)
+        run: |
+          RESPONSE=$(curl -sf http://localhost:5000/api/faculty)
+          echo "Faculty response: $RESPONSE"
+          echo "$RESPONSE" | grep -qE '(\[|\{)'
+          echo "✓ Faculty endpoint accessible"
+
+      - name: Test – Notices endpoint (list)
+        run: |
+          RESPONSE=$(curl -sf http://localhost:5000/api/notices)
+          echo "Notices response: $RESPONSE"
+          echo "$RESPONSE" | grep -qE '(\[|\{)'
+          echo "✓ Notices endpoint accessible"
+
+      - name: Test – 404 for unknown route
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/api/does-not-exist)
+          echo "404 test returned HTTP $HTTP_CODE"
+          [ "$HTTP_CODE" = "404" ]
+          echo "✓ 404 handler works"
+
+      - name: Test – Authentication required for admin route
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/api/departments/admin/all)
+          echo "Auth test returned HTTP $HTTP_CODE"
+          [ "$HTTP_CODE" = "401" ] || [ "$HTTP_CODE" = "403" ]
+          echo "✓ Admin routes protected"

@@ -1,0 +1,10 @@
+# Docker Compose configurations
+.env
+.next
+dist
+node_modules
+out
+uploads
+.git
+.DS_Store
+*.log

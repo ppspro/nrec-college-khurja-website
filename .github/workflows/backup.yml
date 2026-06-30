@@ -1,0 +1,58 @@
+name: Backup Verification
+
+# This workflow verifies the backup SCRIPT is syntactically valid and
+# executable on every change to it. Actual production backups run via
+# cron on the server (see docs/OPERATIONS.md – Maintenance Schedule).
+#
+# The workflow also documents the recommended crontab entries as comments.
+
+on:
+  push:
+    paths:
+      - 'scripts/backup.sh'
+      - 'scripts/restore.sh'
+      - '.github/workflows/backup.yml'
+  pull_request:
+    paths:
+      - 'scripts/backup.sh'
+      - 'scripts/restore.sh'
+
+# Recommended server-side crontab (add to root crontab on the host):
+#
+#   # Daily backup at 02:00
+#   0 2 * * * /opt/nrec/scripts/backup.sh daily >> /var/log/nrec-backup.log 2>&1
+#
+#   # Weekly backup on Sunday at 03:00
+#   0 3 * * 0 /opt/nrec/scripts/backup.sh weekly >> /var/log/nrec-backup.log 2>&1
+#
+#   # Monthly backup on the 1st at 04:00
+#   0 4 1 * * /opt/nrec/scripts/backup.sh monthly >> /var/log/nrec-backup.log 2>&1
+
+jobs:
+  verify-scripts:
+    name: Verify Backup Scripts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check backup.sh syntax
+        run: bash -n scripts/backup.sh
+
+      - name: Check restore.sh syntax
+        run: bash -n scripts/restore.sh
+
+      - name: Check health-check.sh syntax
+        run: bash -n scripts/health-check.sh
+
+      - name: Verify scripts are executable
+        run: |
+          chmod +x scripts/backup.sh scripts/restore.sh scripts/health-check.sh
+          echo "✓ All scripts are executable"
+
+      - name: ShellCheck lint
+        uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          scandir: './scripts'
+          severity: warning

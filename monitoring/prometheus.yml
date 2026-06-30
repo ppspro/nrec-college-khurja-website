@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # ── Backend API health ─────────────────────────────────────────────
+  - job_name: nrec-backend
+    static_configs:
+      - targets: ['backend:5000']
+    metrics_path: /api/health
+    # Health endpoint returns JSON, not Prometheus format.
+    # Use blackbox-style probing: prometheus will record up/down.
+
+  # ── MongoDB via mongodb_exporter ──────────────────────────────────
+  # Uncomment when mongodb_exporter is added to the monitoring compose.
+  # - job_name: mongodb
+  #   static_configs:
+  #     - targets: ['mongodb-exporter:9216']
+
+  # ── Node.js process metrics (if prom-client is added) ────────────
+  # - job_name: nrec-backend-metrics
+  #   static_configs:
+  #     - targets: ['backend:5000']
+  #   metrics_path: /api/metrics
+
+  # ── Cadvisor – container CPU/mem/disk/restarts ────────────────────
+  - job_name: cadvisor
+    static_configs:
+      - targets: ['cadvisor:8080']
+
+  # ── Prometheus self-scrape ────────────────────────────────────────
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']

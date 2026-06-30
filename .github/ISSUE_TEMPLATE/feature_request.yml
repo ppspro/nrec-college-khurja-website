@@ -1,0 +1,57 @@
+name: Feature Request
+description: Suggest a new feature or enhancement (refer to the v2.x roadmap)
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting, please review the [Product Roadmap](../../docs/ROADMAP.md)
+        to check if this feature is already planned.
+
+  - type: input
+    id: title
+    attributes:
+      label: Feature Summary
+      description: One clear sentence describing the feature.
+      placeholder: "e.g. Add student portal login page"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: What problem does this feature solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe how you'd like this to work.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any other approaches you've considered?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: roadmap_version
+    attributes:
+      label: Target Roadmap Version
+      description: Which planned version does this belong to?
+      options:
+        - v2.0 – Student Portal
+        - v2.1 – Faculty Portal
+        - v2.2 – Online Admission
+        - v2.3 – Fee & Finance
+        - v2.4 – Mobile App
+        - v3.x – Future / Not Planned
+    validations:
+      required: false
