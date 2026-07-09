@@ -27,6 +27,10 @@ export interface ISettings extends Document {
   establishedYear: string;
   affiliatedTo: string;
   recognizedBy: string[];
+  maintenanceMode: boolean;
+  siteAnnouncement: string;
+  analyticsId: string;
+  smtpConfig: Record<string, any>;
   updatedAt: Date;
 }
 
@@ -56,6 +60,10 @@ const settingsSchema = new Schema<ISettings>(
     establishedYear: { type: String, default: '1901' },
     affiliatedTo: { type: String, default: 'Chaudhary Charan Singh University, Meerut' },
     recognizedBy: [{ type: String }],
+    maintenanceMode: { type: Boolean, default: false },
+    siteAnnouncement: { type: String, default: '' },
+    analyticsId: { type: String, default: '' },
+    smtpConfig: { type: Schema.Types.Mixed, default: {} },
   },
   { timestamps: true }
 );

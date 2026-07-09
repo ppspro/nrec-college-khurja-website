@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save } from 'lucide-react';
 import api from '@/lib/api';
@@ -15,8 +15,10 @@ const DEFAULT = {
   author: 'NREC College',
 };
 
-export default function NewsForm({ params }: { params: Promise<{ id?: string }> }) {
+export default function NewsForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const unwrappedParams = { id: searchParams.get('id') || undefined };
   const [form, setForm] = useState(DEFAULT);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -39,7 +41,7 @@ export default function NewsForm({ params }: { params: Promise<{ id?: string }> 
   };
 
   useEffect(() => {
-    params.then((p) => {
+    Promise.resolve(unwrappedParams).then((p) => {
       const newsId = p.id;
       if (newsId) {
         setId(newsId);
@@ -148,7 +150,11 @@ export default function NewsForm({ params }: { params: Promise<{ id?: string }> 
 
           <div>
             <label className="form-label">Excerpt / Summary *</label>
-            <textarea required value={form.excerpt} onChange={(e) => update('excerpt', e.target.value)} className="form-input h-16 resize-none" placeholder="Short description..." />
+            <textarea required value={form.excerpt} onChange={(e) => update('excerpt', e.target.value)} className="form-input h-16 resize-none" placeholder="Short description..." maxLength={160} />
+            <div className="flex justify-between mt-1">
+              <p className="text-[11px] text-gray-500">Brief summary for news feeds and SEO meta description.</p>
+              <p className="text-[11px] text-gray-500 font-mono">{form.excerpt.length}/160 characters</p>
+            </div>
           </div>
 
           <div>
@@ -180,7 +186,11 @@ export default function NewsForm({ params }: { params: Promise<{ id?: string }> 
 
           {/* Image Upload */}
           <div>
-            <label className="form-label">Feature Image</label>
+            <label className="form-label flex gap-2 items-center">
+              Feature Image
+              <span className="px-2 py-0.5 bg-gray-100 text-gray-500 rounded text-[10px] uppercase font-bold tracking-wider">Recommended: 800×600px</span>
+            </label>
+            <p className="text-[11px] text-gray-500 mb-2 mt-0.5">Upload a high-quality JPG, PNG, or WebP. Max size: 2MB.</p>
             <div className="flex items-center gap-4">
               <input type="file" accept="image/*" onChange={handleFileChange} className="form-input" />
               {preview && (
@@ -194,7 +204,7 @@ export default function NewsForm({ params }: { params: Promise<{ id?: string }> 
           <div className="flex gap-6">
             <label className="flex items-center gap-2.5 cursor-pointer">
               <input type="checkbox" checked={form.isPublished} onChange={(e) => update('isPublished', e.target.checked)} className="w-4 h-4 accent-[#990A25]" />
-              <span className="text-sm text-[#2E2E2E] font-medium">Published (visible on site)</span>
+              <span className="text-sm text-[#2E2E2E] font-medium">Visibility (Publish to Website)</span>
             </label>
             <label className="flex items-center gap-2.5 cursor-pointer">
               <input type="checkbox" checked={form.isFeatured} onChange={(e) => update('isFeatured', e.target.checked)} className="w-4 h-4 accent-[#990A25]" />

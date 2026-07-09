@@ -32,14 +32,15 @@ export default function AdminCurriculumPage() {
   ];
 
   return (
-    <AdminListPage
+    <AdminListPage helpSection="curriculum"
       title="Curriculum Management"
       apiEndpoint="/curriculum/admin/all"
       dataKey="curriculum"
       newHref="/admin/curriculum/new"
-      editHref={(row) => `/admin/curriculum/${row._id}/edit`}
+      editHref={(row) => `/admin/curriculum/edit?id=${row._id}`}
       columns={columns}
       searchPlaceholder="Search curriculum..."
     />
   );
 }
+

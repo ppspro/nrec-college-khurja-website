@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save } from 'lucide-react';
 import api from '@/lib/api';
@@ -15,8 +15,10 @@ const DEFAULT = {
   isActive: true, expiryDate: '', publishDate: new Date().toISOString().split('T')[0],
 };
 
-export default function NoticeForm({ params }: { params: Promise<{ id?: string }> }) {
+export default function NoticeForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const unwrappedParams = { id: searchParams.get('id') || undefined };
   const [form, setForm] = useState(DEFAULT);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
@@ -37,7 +39,7 @@ export default function NoticeForm({ params }: { params: Promise<{ id?: string }
   };
 
   useEffect(() => {
-    params.then((p) => {
+    Promise.resolve(unwrappedParams).then((p) => {
       const noticeId = p.id;
       if (noticeId) {
         setId(noticeId);

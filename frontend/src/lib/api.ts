@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+export const API_URL = `${API_BASE_URL}/api`;
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 15000,
+  timeout: 60000,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -34,7 +35,7 @@ api.interceptors.response.use(
 export const uploadsUrl = (path: string) => {
   if (!path) return '';
   if (path.startsWith('http')) return path;
-  return `${process.env.NEXT_PUBLIC_UPLOADS_URL || 'http://localhost:5000'}${path}`;
+  return `${API_BASE_URL}${path}`;
 };
 
 export default api;

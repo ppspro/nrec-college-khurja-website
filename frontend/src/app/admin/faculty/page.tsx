@@ -3,13 +3,13 @@ import AdminListPage from '@/components/admin/AdminListPage';
 import { Faculty } from '@/types';
 export default function AdminFacultyPage() {
   return (
-    <AdminListPage<Faculty>
+    <AdminListPage<Faculty> helpSection="faculty"
       title="Faculty"
       subtitle="Manage faculty members and their profiles"
       apiEndpoint="/faculty"
       dataKey="faculty"
       newHref="/admin/faculty/new"
-      editHref={(f) => `/admin/faculty/${f._id}/edit`}
+      editHref={(f) => `/admin/faculty/edit?id=${f._id}`}
       searchPlaceholder="Search faculty..."
       columns={[
         { key: 'name', label: 'Name', render: (f) => <span className="font-semibold">{f.name}</span> },
@@ -21,3 +21,4 @@ export default function AdminFacultyPage() {
     />
   );
 }
+

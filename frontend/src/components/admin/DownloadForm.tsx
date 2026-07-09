@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save } from 'lucide-react';
 import api from '@/lib/api';
@@ -15,8 +15,10 @@ const DEFAULT = {
   title: '', description: '', category: 'Prospectus', order: 0, isActive: true,
 };
 
-export default function DownloadForm({ params }: { params: Promise<{ id?: string }> }) {
+export default function DownloadForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const unwrappedParams = { id: searchParams.get('id') || undefined };
   const [form, setForm] = useState(DEFAULT);
   const [file, setFile] = useState<File | null>(null);
   const [previewName, setPreviewName] = useState<string | null>(null);
@@ -39,7 +41,7 @@ export default function DownloadForm({ params }: { params: Promise<{ id?: string
   };
 
   useEffect(() => {
-    params.then((p) => {
+    Promise.resolve(unwrappedParams).then((p) => {
       const downloadId = p.id;
       if (downloadId) {
         setId(downloadId);

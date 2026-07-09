@@ -1,4 +1,10 @@
+import { Suspense } from 'react';
 import EventForm from '@/components/admin/EventForm';
+
 export default function NewEventPage() {
-  return <EventForm params={Promise.resolve({})} />;
+  return (
+    <Suspense fallback={<div>Loading form...</div>}>
+      <EventForm />
+    </Suspense>
+  );
 }

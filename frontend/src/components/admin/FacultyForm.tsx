@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save } from 'lucide-react';
 import api from '@/lib/api';
@@ -14,8 +14,10 @@ const DEFAULT = {
   biography: '', specialization: '', experience: '', publications: '', order: 0, isActive: true,
 };
 
-export default function FacultyForm({ params }: { params: Promise<{ id?: string }> }) {
+export default function FacultyForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const unwrappedParams = { id: searchParams.get('id') || undefined };
   const [form, setForm] = useState(DEFAULT);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [file, setFile] = useState<File | null>(null);
@@ -44,7 +46,7 @@ export default function FacultyForm({ params }: { params: Promise<{ id?: string 
       .then((res) => setDepartments(res.data.departments || []))
       .catch(() => addToast('Failed to load departments list', 'error'));
 
-    params.then((p) => {
+    Promise.resolve(unwrappedParams).then((p) => {
       const facultyId = p.id;
       if (facultyId) {
         setId(facultyId);

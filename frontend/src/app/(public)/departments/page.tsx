@@ -1,27 +1,35 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, BookOpen } from 'lucide-react';
 import PageBanner from '@/components/ui/PageBanner';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import EmptyState from '@/components/ui/EmptyState';
+import SafeImage from '@/components/ui/SafeImage';
+import { uploadsUrl, API_URL as API } from '@/lib/api';
+import { truncate } from '@/lib/defaults';
 
-export const metadata: Metadata = {
-  title: 'Departments | NREC College Khurja',
-  description: 'Explore all academic departments at NREC College including Arts, Science, Commerce, Education, and more.',
-};
+export default function DepartmentsPage() {
+  const [departments, setDepartments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-
-async function getDepartments() {
-  try {
-    const res = await fetch(`${API}/departments`, { next: { revalidate: 300 } });
-    const data = await res.json();
-    return data.departments || [];
-  } catch {
-    return [];
-  }
-}
-
-export default async function DepartmentsPage() {
-  const departments = await getDepartments();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API}/departments`);
+        if (res.ok) {
+          const data = await res.json();
+          setDepartments(data.departments || []);
+        }
+      } catch {
+        setDepartments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const breadcrumbs = [{ label: 'Departments' }];
 
@@ -33,51 +41,80 @@ export default async function DepartmentsPage() {
         breadcrumbs={breadcrumbs}
       />
 
-      <section className="bg-white section-py relative">
-        <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+      <section className="bg-[#F8F5F0] section-py relative">
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(#8B0E2A 1px, transparent 1px), linear-gradient(90deg, #8B0E2A 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         
         <div className="container-nrec relative">
-          {departments.length === 0 ? (
-            <div className="text-center py-20 text-[#666666]">Departments coming soon.</div>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton h-[380px] rounded-[24px]" />)}
+            </div>
+          ) : departments.length === 0 ? (
+            <EmptyState 
+              title="No Departments Found" 
+              description="We are currently updating our department information." 
+            />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {departments.map((dept: any, idx: number) => (
-                <Link
+              {departments.map((dept: any, index: number) => (
+                <ScrollReveal
                   key={dept._id}
-                  href={`/departments/${dept.slug}`}
-                  className="group flex flex-col h-full bg-white border border-[#E7E7E7] rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 relative"
+                  direction="up"
+                  delay={0.05 * index}
+                  className="h-full group"
                 >
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#990A25] to-[#C6A04D] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out" />
-                  
-                  <div className="p-8 flex flex-col h-full relative z-10">
-                    <div className="w-14 h-14 rounded-2xl bg-[#990A25]/5 flex items-center justify-center mb-6 group-hover:bg-[#990A25] group-hover:text-white text-[#990A25] transition-colors duration-300">
-                      <BookOpen size={26} />
-                    </div>
-                    
-                    <h3 className="font-heading font-bold text-[#111111] text-xl mb-3 group-hover:text-[#990A25] transition-colors">
-                      {dept.name}
-                    </h3>
-                    
-                    <p className="text-[#666666] text-sm leading-relaxed mb-6 flex-1 font-light">
-                      {dept.description || 'Dedicated to academic excellence and holistic development.'}
-                    </p>
-                    
-                    <div className="pt-5 border-t border-[#E7E7E7]/60 flex items-center justify-between">
-                      <div className="text-xs font-semibold text-[#111111] uppercase tracking-wider">
-                        {dept.headOfDepartment ? `HoD: ${dept.headOfDepartment}` : 'View Details'}
+                  <Link href={`/departments/${dept.slug}`} className="block h-full">
+                    <div className="card h-full p-0 overflow-hidden relative isolate bg-white shadow-lg hover:shadow-2xl transition-all duration-300">
+                      
+                      {/* Top Image Area */}
+                      <div className="relative aspect-[16/9] overflow-hidden">
+                        <SafeImage
+                          fallbackKey="department"
+                          src={uploadsUrl(dept.image)}
+                          alt={dept.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-700"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                        
+                        {/* Overlay Content */}
+                        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center text-white">
+                            <BookOpen size={24} />
+                          </div>
+                          {dept.shortName && (
+                            <span className="text-white font-bold text-lg opacity-80 uppercase tracking-widest font-heading">
+                              {dept.shortName}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="w-8 h-8 rounded-full border border-[#E7E7E7] flex items-center justify-center text-[#990A25] group-hover:bg-[#990A25] group-hover:border-[#990A25] group-hover:text-white transition-all duration-300">
-                        <ArrowRight size={14} />
+
+                      {/* Content */}
+                      <div className="p-8 flex flex-col flex-grow">
+                        <h3 className="font-heading font-bold text-[#111111] text-2xl mb-3 group-hover:text-[#8B0E2A] transition-colors leading-tight">
+                          {dept.name}
+                        </h3>
+                        
+                        <p className="text-gray-500 text-sm leading-relaxed mb-8 flex-grow font-light">
+                          {truncate(dept.description || '', 140)}
+                        </p>
+                        
+                        <div className="pt-4 border-t border-gray-100 flex items-center justify-between mt-auto">
+                          <div className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                            {dept.headOfDepartment ? `HOD: ${dept.headOfDepartment}` : 'Explore Department'}
+                          </div>
+                          <div className="w-8 h-8 rounded-full bg-[#F8F5F0] flex items-center justify-center text-[#8B0E2A] group-hover:bg-[#8B0E2A] group-hover:text-white transition-all duration-300">
+                            <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                          </div>
+                        </div>
                       </div>
+                      
                     </div>
-                  </div>
-                  
-                  {/* Subtle watermark in card background */}
-                  <div className="absolute -right-6 -bottom-6 opacity-[0.03] text-9xl font-heading font-bold pointer-events-none group-hover:opacity-[0.05] transition-opacity">
-                    {String(idx + 1).padStart(2, '0')}
-                  </div>
-                </Link>
+                  </Link>
+                </ScrollReveal>
               ))}
             </div>
           )}

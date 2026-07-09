@@ -1,41 +1,29 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Mail, BookOpen } from 'lucide-react';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Mail, Briefcase, GraduationCap } from 'lucide-react';
+import api, { uploadsUrl } from '@/lib/api';
+import { Faculty } from '@/types';
 import PageBanner from '@/components/ui/PageBanner';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import SafeImage from '@/components/ui/SafeImage';
+import EmptyState from '@/components/ui/EmptyState';
+import { truncate } from '@/lib/defaults';
 
-export const metadata: Metadata = {
-  title: 'Faculty | NREC College Khurja',
-  description: 'Meet our distinguished faculty members at NREC College, Khurja.',
-};
+export default function FacultyPage() {
+  const [faculty, setFaculty] = useState<Faculty[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-
-async function getFaculty() {
-  try {
-    const res = await fetch(`${API}/faculty`, { next: { revalidate: 300 } });
-    return (await res.json()).faculty || [];
-  } catch { return []; }
-}
-
-async function getDepartments() {
-  try {
-    const res = await fetch(`${API}/departments`, { next: { revalidate: 300 } });
-    return (await res.json()).departments || [];
-  } catch { return []; }
-}
-
-export default async function FacultyPage() {
-  const [faculty, departments] = await Promise.all([getFaculty(), getDepartments()]);
-
-  // Group by department
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const grouped: Record<string, any[]> = {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  faculty.forEach((f: any) => {
-    const deptName = typeof f.department === 'object' ? f.department?.name : 'General';
-    if (!grouped[deptName]) grouped[deptName] = [];
-    grouped[deptName].push(f);
-  });
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await api.get('/faculty');
+        setFaculty(res.data.faculty || []);
+      } catch { setFaculty([]); }
+      finally { setLoading(false); }
+    };
+    fetch();
+  }, []);
 
   const breadcrumbs = [{ label: 'Faculty' }];
 
@@ -43,65 +31,74 @@ export default async function FacultyPage() {
     <>
       <PageBanner
         title="Our Faculty"
-        subtitle="Meet the dedicated educators shaping the next generation."
+        subtitle="Meet the distinguished educators and researchers shaping the future at NREC."
         breadcrumbs={breadcrumbs}
       />
 
-      <section className="bg-[#F9F9F9] section-py">
-        <div className="container-nrec">
-          {Object.keys(grouped).length === 0 ? (
-            <div className="text-center py-20 text-[#666666]">Faculty directory coming soon.</div>
+      <section className="bg-[#F8F5F0] section-py relative">
+        <div className="container-nrec relative">
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton h-80 rounded-[20px]" />)}
+            </div>
+          ) : faculty.length === 0 ? (
+            <EmptyState title="No faculty members found" />
           ) : (
-            <div className="space-y-20">
-              {Object.entries(grouped).map(([deptName, members]) => (
-                <div key={deptName} className="relative">
-                  {/* Elegant Department Header */}
-                  <div className="flex items-center gap-4 mb-10">
-                    <div className="w-12 h-12 rounded-xl bg-white border border-[#E7E7E7] shadow-sm flex items-center justify-center">
-                      <BookOpen size={20} className="text-[#990A25]" />
-                    </div>
-                    <h2 className="font-heading font-bold text-[#111111] text-3xl tracking-tight">{deptName}</h2>
-                    <div className="flex-1 h-px bg-gradient-to-r from-[#E7E7E7] to-transparent ml-4" />
-                    <span className="text-xs font-semibold uppercase tracking-widest text-[#990A25] bg-[#990A25]/5 px-3 py-1 rounded-full border border-[#990A25]/10">
-                      {members.length} Member{members.length !== 1 ? 's' : ''}
-                    </span>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {members.map((f) => (
-                      <div key={f._id} className="bg-white border border-[#E7E7E7] rounded-xl p-8 text-center group hover:shadow-xl hover:border-[#C6A04D]/30 transition-all duration-300 flex flex-col h-full relative overflow-hidden">
-                        
-                        {/* Decorative Top Accent */}
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-[#E7E7E7] group-hover:bg-[#990A25] transition-colors duration-300" />
-                        
-                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#F9F9F9] to-[#E7E7E7] flex items-center justify-center font-heading font-bold text-[#990A25] text-3xl mx-auto mb-5 shadow-inner border-2 border-white group-hover:scale-105 transition-transform duration-300">
-                          {f.name[0]}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {faculty.map((member, idx) => {
+                const dept = typeof member.department === 'object' && member.department !== null ? member.department.name : 'General';
+                return (
+                  <ScrollReveal key={member._id} direction="up" delay={0.05 * (idx % 4)} className="h-full">
+                    <div className="card p-0 overflow-hidden h-full flex flex-col group bg-white border border-gray-100 shadow-md hover:shadow-xl transition-all duration-300">
+                      
+                      {/* Photo Area */}
+                      <div className="relative aspect-[4/5] w-full overflow-hidden bg-gray-100">
+                        <SafeImage
+                          fallbackKey="faculty"
+                          src={uploadsUrl(member.photo)}
+                          alt={member.name}
+                          fill
+                          className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
+                          {member.email && (
+                            <a href={`mailto:${member.email}`} className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-[#8B0E2A] transition-colors border border-white/30">
+                              <Mail size={18} />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 text-center flex flex-col flex-grow relative">
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-[#B8860B] border border-gray-100 group-hover:bg-[#B8860B] group-hover:text-white transition-colors duration-300">
+                          <GraduationCap size={20} />
                         </div>
                         
-                        <h3 className="font-heading font-bold text-[#111111] text-lg mb-1 group-hover:text-[#990A25] transition-colors">{f.name}</h3>
-                        <div className="text-sm font-semibold text-[#990A25] uppercase tracking-wider mb-2">{f.designation}</div>
+                        <h3 className="font-heading font-bold text-lg text-[#111111] mt-4 mb-1 group-hover:text-[#8B0E2A] transition-colors">
+                          {member.name}
+                        </h3>
                         
-                        <div className="text-xs text-[#666666] mb-4 font-light">{f.qualification}</div>
+                        <p className="text-[#8B0E2A] text-sm font-semibold mb-3">
+                          {member.designation}
+                        </p>
                         
-                        {f.specialization?.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 justify-center mb-5 mt-auto">
-                            {f.specialization.slice(0, 2).map((s: string) => (
-                              <span key={s} className="px-2.5 py-1 bg-[#F9F9F9] border border-[#E7E7E7] text-[10px] uppercase tracking-wider rounded text-[#666666] font-medium">{s}</span>
-                            ))}
-                          </div>
-                        )}
+                        <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500 mb-4 bg-gray-50 py-1.5 px-3 rounded-full mx-auto font-medium">
+                          <Briefcase size={14} className="text-gray-400" />
+                          {dept}
+                        </div>
                         
-                        {f.email && (
-                          <a href={`mailto:${f.email}`} className="mt-auto flex items-center justify-center gap-2 pt-4 text-xs font-medium text-[#666666] hover:text-[#990A25] transition-colors border-t border-[#E7E7E7]/60 w-full group-hover:border-[#990A25]/20">
-                            <Mail size={14} className="text-[#C6A04D] group-hover:text-[#990A25]" />
-                            {f.email}
-                          </a>
+                        {member.qualification && (
+                          <p className="text-sm text-gray-500 font-light mt-auto">
+                            {truncate(member.qualification, 60)}
+                          </p>
                         )}
                       </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                    </div>
+                  </ScrollReveal>
+                );
+              })}
             </div>
           )}
         </div>

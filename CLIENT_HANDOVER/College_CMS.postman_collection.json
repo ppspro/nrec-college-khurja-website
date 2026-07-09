@@ -1,0 +1,457 @@
+{
+  "info": {
+    "_postman_id": "nrec-cms-v1-2026",
+    "name": "NREC College CMS API v1.0",
+    "description": "Complete API collection for NREC College Content Management System. Import the environment file first, then run 'Admin Login' to auto-set the Bearer token.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/health",
+            "description": "Check if the backend API is running."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if(json.token) { pm.environment.set('token', json.token); pm.environment.set('admin_id', json.admin.id); }",
+                  "pm.test('Login successful', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@nreccollege.ac.in\",\n  \"password\": \"admin@123\"\n}"
+            },
+            "description": "Login with admin credentials. The JWT token is automatically saved to the environment variable {{token}}."
+          }
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/auth/me"
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/auth/profile",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"name\": \"NREC Admin Updated\" }",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/auth/change-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"admin@123\",\n  \"newPassword\": \"newSecurePassword\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/auth/forgot-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"admin@nreccollege.ac.in\" }"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "News",
+      "item": [
+        {
+          "name": "List All News",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/news?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "news"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "status", "value": "active", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single News",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/news/{{news_id}}"
+          }
+        },
+        {
+          "name": "Create News",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/news",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title", "value": "Annual Sports Meet 2026", "type": "text" },
+                { "key": "content", "value": "Registration is now open for the Annual Sports Meet 2026.", "type": "text" },
+                { "key": "category", "value": "Sports", "type": "text" },
+                { "key": "status", "value": "active", "type": "text" },
+                { "key": "image", "type": "file", "src": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update News",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/news/{{news_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"title\": \"Updated Title\", \"status\": \"active\" }"
+            }
+          }
+        },
+        {
+          "name": "Delete News",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/news/{{news_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notices",
+      "item": [
+        {
+          "name": "List All Notices",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/notices?page=1&limit=10"
+          }
+        },
+        {
+          "name": "Create Notice",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/notices",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title", "value": "Examination Schedule 2026", "type": "text" },
+                { "key": "content", "value": "The examination schedule for 2026 has been released.", "type": "text" },
+                { "key": "category", "value": "Examination", "type": "text" },
+                { "key": "status", "value": "active", "type": "text" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Notice",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/notices/{{notice_id}}",
+            "body": { "mode": "raw", "raw": "{ \"status\": \"inactive\" }" }
+          }
+        },
+        {
+          "name": "Delete Notice",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/notices/{{notice_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "List All Events",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/events?page=1&limit=10"
+          }
+        },
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/events",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title", "value": "Science Exhibition 2026", "type": "text" },
+                { "key": "description", "value": "Annual Science Exhibition for all students.", "type": "text" },
+                { "key": "startDate", "value": "2026-08-15", "type": "text" },
+                { "key": "endDate", "value": "2026-08-17", "type": "text" },
+                { "key": "venue", "value": "College Auditorium", "type": "text" },
+                { "key": "status", "value": "active", "type": "text" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/events/{{event_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Departments",
+      "item": [
+        {
+          "name": "List Departments",
+          "request": { "method": "GET", "url": "{{base_url}}/api/departments" }
+        },
+        {
+          "name": "Create Department",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/departments",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Department of Physics", "type": "text" },
+                { "key": "code", "value": "PHY", "type": "text" },
+                { "key": "description", "value": "Department of Physics at NREC College.", "type": "text" },
+                { "key": "status", "value": "active", "type": "text" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Department",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/departments/{{dept_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Courses",
+      "item": [
+        {
+          "name": "List Courses",
+          "request": { "method": "GET", "url": "{{base_url}}/api/courses" }
+        },
+        {
+          "name": "Create Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/courses",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"B.Sc. Physics\",\n  \"code\": \"BSC-PHY\",\n  \"duration\": \"3 Years\",\n  \"seats\": 60,\n  \"status\": \"active\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Course",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/courses/{{course_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Faculty",
+      "item": [
+        {
+          "name": "List Faculty",
+          "request": { "method": "GET", "url": "{{base_url}}/api/faculty" }
+        },
+        {
+          "name": "Create Faculty",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/faculty",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Dr. Priya Mehta", "type": "text" },
+                { "key": "designation", "value": "Associate Professor", "type": "text" },
+                { "key": "qualification", "value": "Ph.D. Physics", "type": "text" },
+                { "key": "status", "value": "active", "type": "text" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Faculty",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/faculty/{{faculty_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gallery",
+      "item": [
+        {
+          "name": "List Gallery",
+          "request": { "method": "GET", "url": "{{base_url}}/api/gallery" }
+        }
+      ]
+    },
+    {
+      "name": "Downloads",
+      "item": [
+        {
+          "name": "List Downloads",
+          "request": { "method": "GET", "url": "{{base_url}}/api/downloads" }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "Get Settings",
+          "request": { "method": "GET", "url": "{{base_url}}/api/settings" }
+        },
+        {
+          "name": "Update Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/api/settings",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"collegeName\": \"NREC College\",\n  \"tagline\": \"Excellence in Education Since 1901\",\n  \"phone\": \"+91-5738-200001\",\n  \"email\": \"info@nreccollege.ac.in\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Media Library",
+      "item": [
+        {
+          "name": "List Media",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/media?page=1&limit=20"
+          }
+        },
+        {
+          "name": "Upload File",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/media",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Media",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/api/media/{{media_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "item": [
+        {
+          "name": "Submit Contact Form",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/contact",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rajesh Kumar\",\n  \"email\": \"rajesh@example.com\",\n  \"phone\": \"+91-9876543210\",\n  \"message\": \"I want to know about the admission process.\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5000" }
+  ]
+}

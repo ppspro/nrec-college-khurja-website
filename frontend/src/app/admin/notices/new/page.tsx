@@ -1,4 +1,10 @@
+import { Suspense } from 'react';
 import NoticeForm from '@/components/admin/NoticeForm';
+
 export default function NewNoticePage() {
-  return <NoticeForm params={Promise.resolve({})} />;
+  return (
+    <Suspense fallback={<div>Loading form...</div>}>
+      <NoticeForm />
+    </Suspense>
+  );
 }

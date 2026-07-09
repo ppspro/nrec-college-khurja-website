@@ -13,6 +13,15 @@ export const getAlbums = async (_req: Request, res: Response): Promise<void> => 
   }
 };
 
+export const getAllImages = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const images = await GalleryImage.find({ isActive: true }).sort({ createdAt: -1 });
+    res.json({ success: true, images });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
 export const getAlbumImages = async (req: Request, res: Response): Promise<void> => {
   try {
     const album = await GalleryAlbum.findOne({ slug: req.params.slug, isActive: true });

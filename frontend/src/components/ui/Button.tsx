@@ -1,42 +1,38 @@
-import React from 'react';
+import { clsx } from 'clsx';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'outline' | 'white' | 'accent';
+  variant?: 'primary' | 'outline' | 'secondary' | 'ghost' | 'white' | 'accent';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
+  children: React.ReactNode;
 }
 
 export default function Button({
-  children,
   variant = 'primary',
   size = 'md',
   loading = false,
   className = '',
+  children,
   disabled,
   ...props
 }: ButtonProps) {
-  const sizeClasses = {
-    sm: 'px-3.5 py-2 text-xs',
-    md: 'px-5 py-2.5 text-sm',
-    lg: 'px-8 py-3.5 text-base',
-  };
-
-  const variantClasses = {
-    primary: 'btn-primary',
-    outline: 'btn-outline',
-    white: 'btn-white',
-    accent: 'btn-accent',
-  };
-
   return (
     <button
+      className={clsx(
+        'btn',
+        `btn-${variant}`,
+        `btn-${size}`,
+        className,
+      )}
       disabled={disabled || loading}
-      className={`btn ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       {...props}
     >
-      {loading ? (
-        <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin flex-shrink-0" />
-      ) : null}
+      {loading && (
+        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+      )}
       {children}
     </button>
   );

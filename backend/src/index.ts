@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import dotenv from 'dotenv';
+import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
@@ -25,6 +26,9 @@ import curriculumRoutes from './routes/curriculum';
 import downloadRoutes from './routes/downloads';
 import galleryRoutes from './routes/gallery';
 import contactRoutes from './routes/contact';
+import pageRoutes from './routes/pages';
+import mediaRoutes from './routes/media';
+import menuRoutes from './routes/menus';
 
 const app = express();
 
@@ -60,6 +64,24 @@ app.use(
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+// Global Rate Limiting
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1000, // Limit each IP to 1000 requests per window
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api', globalLimiter);
+
+// Specific Auth Throttling
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20, // 20 attempts per 15 min
+  message: 'Too many login attempts from this IP, please try again later.'
+});
+app.use('/api/auth', authLimiter);
+
 // Static files (uploads)
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
@@ -88,6 +110,9 @@ app.use('/api/curriculum', curriculumRoutes);
 app.use('/api/downloads', downloadRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/pages', pageRoutes);
+app.use('/api/media', mediaRoutes);
+app.use('/api/menus', menuRoutes);
 
 // ─── Error Handling ──────────────────────────────────────────────────────────
 
@@ -96,7 +121,7 @@ app.use(errorHandler);
 
 // ─── Server Startup ──────────────────────────────────────────────────────────
 
-const PORT = parseInt(process.env.PORT || '5000', 10);
+const PORT = parseInt(process.env.PORT || '5005', 10);
 
 const server = app.listen(PORT, () => {
   logger.info('NREC College Website API started', {

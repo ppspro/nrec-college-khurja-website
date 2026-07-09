@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save } from 'lucide-react';
 import api from '@/lib/api';
@@ -14,8 +14,10 @@ const DEFAULT = {
   vision: '', mission: '', objectives: '', facilities: '', achievements: '', order: 0, isActive: true,
 };
 
-export default function DepartmentForm({ params }: { params: Promise<{ id?: string }> }) {
+export default function DepartmentForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const unwrappedParams = { id: searchParams.get('id') || undefined };
   const [form, setForm] = useState(DEFAULT);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -38,7 +40,7 @@ export default function DepartmentForm({ params }: { params: Promise<{ id?: stri
   };
 
   useEffect(() => {
-    params.then((p) => {
+    Promise.resolve(unwrappedParams).then((p) => {
       const deptId = p.id;
       if (deptId) {
         setId(deptId);

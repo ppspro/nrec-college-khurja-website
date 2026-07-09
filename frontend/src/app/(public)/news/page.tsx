@@ -1,11 +1,15 @@
 'use client';
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { Calendar, ArrowRight } from 'lucide-react';
+import { Calendar, ArrowRight, LayoutGrid, Newspaper } from 'lucide-react';
 import api, { uploadsUrl } from '@/lib/api';
 import { News } from '@/types';
 import PageBanner from '@/components/ui/PageBanner';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import SafeImage from '@/components/ui/SafeImage';
+import EmptyState from '@/components/ui/EmptyState';
+import { truncate } from '@/lib/defaults';
 
 export default function NewsPage() {
   const [news, setNews] = useState<News[]>([]);
@@ -36,60 +40,71 @@ export default function NewsPage() {
         breadcrumbs={breadcrumbs}
       />
 
-      <section className="bg-white section-py relative">
-        <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+      <section className="bg-[#F8F5F0] section-py relative">
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(#8B0E2A 1px, transparent 1px), linear-gradient(90deg, #8B0E2A 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         
         <div className="container-nrec relative">
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton h-[420px] rounded-xl" />)}
+              {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton h-[420px] rounded-[24px]" />)}
             </div>
           ) : news.length === 0 ? (
-            <div className="text-center py-20 text-[#666666]">No news available at the moment.</div>
+            <EmptyState icon={<Newspaper size={32} className="text-gray-400" />} title="No news available at the moment" />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {news.map((item) => (
-                <Link key={item._id} href={`/news/${item.slug}`} className="group flex flex-col h-full bg-white border border-[#E7E7E7] rounded-xl overflow-hidden hover:shadow-xl hover:border-[#C6A04D]/30 transition-all duration-500">
-                  <div className="relative h-56 bg-[#F9F9F9] overflow-hidden">
-                    {item.image ? (
-                      <Image src={uploadsUrl(item.image)} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
-                    ) : (
-                      <div className="w-full h-full bg-[#111111] relative overflow-hidden flex items-center justify-center">
-                        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
-                        <span className="font-heading text-8xl font-bold text-white opacity-5 tracking-tighter select-none scale-150 rotate-12 group-hover:scale-[1.6] group-hover:rotate-6 transition-transform duration-700">NREC</span>
-                      </div>
-                    )}
-                    <div className="absolute top-4 left-4 z-10">
-                      <span className="bg-white text-[#990A25] text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded shadow-sm">
-                        {item.category}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="p-8 flex flex-col flex-1 bg-white">
-                    <div className="flex items-center gap-2 mb-4 text-xs font-semibold text-[#666666] tracking-wider uppercase">
-                      <Calendar size={13} className="text-[#C6A04D]" />
-                      {new Date(item.publishDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </div>
-                    
-                    <h3 className="font-heading font-bold text-[#111111] text-xl mb-4 line-clamp-2 group-hover:text-[#990A25] transition-colors leading-snug">
-                      {item.title}
-                    </h3>
-                    
-                    <p className="text-[#666666] text-sm line-clamp-3 mb-6 font-light leading-relaxed flex-1">
-                      {item.excerpt}
-                    </p>
-                    
-                    <div className="mt-auto pt-5 border-t border-[#E7E7E7]/60 flex items-center justify-between group-hover:border-[#990A25]/20 transition-colors">
-                      <span className="text-xs font-semibold text-[#111111] uppercase tracking-wider group-hover:text-[#990A25] transition-colors">
-                        Read Story
-                      </span>
-                      <div className="w-8 h-8 rounded-full border border-[#E7E7E7] flex items-center justify-center text-[#990A25] group-hover:bg-[#990A25] group-hover:border-[#990A25] group-hover:text-white transition-all duration-300">
-                        <ArrowRight size={14} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {news.map((item, idx) => (
+                <ScrollReveal key={item._id} direction="up" delay={0.05 * (idx % 3)} className="h-full">
+                  <Link href={`/news/${item.slug}`} className="group flex flex-col h-full bg-white border border-gray-100 rounded-[20px] overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div className="relative h-56 bg-gray-100 overflow-hidden">
+                      <SafeImage
+                        fallbackKey="news"
+                        src={uploadsUrl(item.image)}
+                        alt={item.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                      
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
+
+                      <div className="absolute top-4 left-4 z-10">
+                        <span className="bg-[#8B0E2A] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-sm">
+                          {item.category}
+                        </span>
                       </div>
                     </div>
-                  </div>
-                </Link>
+                    
+                    <div className="p-8 flex flex-col flex-1 bg-white relative">
+                      {/* Icon overlay */}
+                      <div className="absolute -top-6 right-6 w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-[#B8860B] border border-gray-100 group-hover:bg-[#B8860B] group-hover:text-white transition-colors duration-300">
+                        <LayoutGrid size={20} />
+                      </div>
+
+                      <div className="flex items-center gap-2 mb-4 text-xs font-semibold text-gray-500 tracking-wider uppercase">
+                        <Calendar size={13} className="text-[#B8860B]" />
+                        {new Date(item.publishDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </div>
+                      
+                      <h3 className="font-heading font-bold text-[#111111] text-xl mb-4 line-clamp-2 group-hover:text-[#8B0E2A] transition-colors leading-snug">
+                        {item.title}
+                      </h3>
+                      
+                      <p className="text-gray-500 text-sm line-clamp-3 mb-6 font-light leading-relaxed flex-1">
+                        {item.excerpt || truncate(item.content?.replace(/<[^>]+>/g, '') || '', 120)}
+                      </p>
+                      
+                      <div className="mt-auto pt-5 border-t border-gray-100 flex items-center justify-between group-hover:border-gray-200 transition-colors">
+                        <span className="text-xs font-semibold text-[#111111] uppercase tracking-wider group-hover:text-[#8B0E2A] transition-colors">
+                          Read Story
+                        </span>
+                        <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-[#8B0E2A] group-hover:bg-[#8B0E2A] group-hover:border-[#8B0E2A] group-hover:text-white transition-all duration-300">
+                          <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </ScrollReveal>
               ))}
             </div>
           )}
@@ -99,15 +114,15 @@ export default function NewsPage() {
               <button 
                 onClick={() => setPage(p => Math.max(1, p - 1))} 
                 disabled={page === 1} 
-                className="px-6 py-2.5 rounded-full border border-[#E7E7E7] text-[#111111] font-semibold text-sm hover:border-[#111111] hover:bg-[#111111] hover:text-white transition-all disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[#111111] disabled:hover:border-[#E7E7E7]"
+                className="px-6 py-2.5 rounded-full border border-gray-200 text-[#111111] font-semibold text-sm hover:border-[#111111] hover:bg-[#111111] hover:text-white transition-all disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[#111111] disabled:hover:border-gray-200 bg-white"
               >
                 Previous
               </button>
-              <span className="text-sm font-medium text-[#666666] tracking-widest uppercase">Page {page} of {totalPages}</span>
+              <span className="text-sm font-medium text-gray-500 tracking-widest uppercase">Page {page} of {totalPages}</span>
               <button 
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))} 
                 disabled={page === totalPages} 
-                className="px-6 py-2.5 rounded-full border border-[#E7E7E7] text-[#111111] font-semibold text-sm hover:border-[#111111] hover:bg-[#111111] hover:text-white transition-all disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[#111111] disabled:hover:border-[#E7E7E7]"
+                className="px-6 py-2.5 rounded-full border border-gray-200 text-[#111111] font-semibold text-sm hover:border-[#111111] hover:bg-[#111111] hover:text-white transition-all disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[#111111] disabled:hover:border-gray-200 bg-white"
               >
                 Next
               </button>

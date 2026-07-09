@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save, UploadCloud } from 'lucide-react';
 import api from '@/lib/api';
@@ -13,8 +13,10 @@ const DEFAULT = {
   title: '', faculty: '', department: '', course: '', semesterYear: '', isActive: true,
 };
 
-export default function CurriculumForm({ params }: { params: Promise<{ id?: string }> }) {
+export default function CurriculumForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const unwrappedParams = { id: searchParams.get('id') || undefined };
   const [form, setForm] = useState(DEFAULT);
   const [file, setFile] = useState<File | null>(null);
   const [previewName, setPreviewName] = useState<string | null>(null);
@@ -44,7 +46,7 @@ export default function CurriculumForm({ params }: { params: Promise<{ id?: stri
     api.get('/departments').then((res) => setDepartments(res.data.departments || []));
     api.get('/courses').then((res) => setCourses(res.data.courses || []));
 
-    params.then((p) => {
+    Promise.resolve(unwrappedParams).then((p) => {
       const curriculumId = p.id;
       if (curriculumId) {
         setId(curriculumId);

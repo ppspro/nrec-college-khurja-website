@@ -5,13 +5,13 @@ import { Pin } from 'lucide-react';
 
 export default function AdminNoticesPage() {
   return (
-    <AdminListPage<Notice>
+    <AdminListPage<Notice> helpSection="notices"
       title="Notice Board"
       subtitle="Manage notices, announcements, and circulars"
       apiEndpoint="/notices"
       dataKey="notices"
       newHref="/admin/notices/new"
-      editHref={(n) => `/admin/notices/${n._id}/edit`}
+      editHref={(n) => `/admin/notices/edit?id=${n._id}`}
       searchPlaceholder="Search notices..."
       columns={[
         {
@@ -47,3 +47,4 @@ export default function AdminNoticesPage() {
     />
   );
 }
+

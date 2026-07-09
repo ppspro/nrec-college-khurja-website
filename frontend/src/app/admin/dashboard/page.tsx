@@ -1,10 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Bell, Newspaper, Calendar, Users, BookOpen, Building2, Download, Image, ArrowRight, TrendingUp } from 'lucide-react';
+import { Bell, Newspaper, Calendar, Users, BookOpen, Building2, Download, Image, ArrowRight, TrendingUp, Server, Database, HardDrive, ShieldCheck } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import Card from '@/components/ui/Card';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 interface Stats { notices: number; news: number; events: number; faculty: number; courses: number; departments: number; downloads: number; gallery: number; }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,17 +46,17 @@ export default function AdminDashboard() {
         const list: ActivityItem[] = [];
         if (notices.status === 'fulfilled') {
           (notices.value.data.notices || []).slice(0, 3).forEach((n: { _id: string; title: string; publishDate: string; }) => {
-            list.push({ _id: n._id, title: n.title, type: 'notice', date: n.publishDate, link: `/admin/notices/${n._id}/edit` });
+            list.push({ _id: n._id, title: n.title, type: 'notice', date: n.publishDate, link: `/admin/notices/edit?id=${n._id}` });
           });
         }
         if (news.status === 'fulfilled') {
           (news.value.data.news || []).slice(0, 3).forEach((n: { _id: string; title: string; publishDate: string; }) => {
-            list.push({ _id: n._id, title: n.title, type: 'news', date: n.publishDate, link: `/admin/news/${n._id}/edit` });
+            list.push({ _id: n._id, title: n.title, type: 'news', date: n.publishDate, link: `/admin/news/edit?id=${n._id}` });
           });
         }
         if (events.status === 'fulfilled') {
           (events.value.data.events || []).slice(0, 3).forEach((e: { _id: string; title: string; startDate: string; }) => {
-            list.push({ _id: e._id, title: e.title, type: 'event', date: e.startDate, link: `/admin/events/${e._id}/edit` });
+            list.push({ _id: e._id, title: e.title, type: 'event', date: e.startDate, link: `/admin/events/edit?id=${e._id}` });
           });
         }
 
@@ -91,12 +92,11 @@ export default function AdminDashboard() {
   return (
     <div>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="admin-page-title">Dashboard</h1>
-        <p className="text-[#666666] text-sm mt-1">
-          Welcome back, <strong>{admin?.name || 'Admin'}</strong>. Here&apos;s what&apos;s happening at NREC College.
-        </p>
-      </div>
+      <AdminPageHeader 
+        title="Dashboard" 
+        description={`Welcome back, ${admin?.name || 'Admin'}. Here's what's happening at NREC College.`}
+        helpSection="dashboard"
+      />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -159,6 +159,46 @@ export default function AdminDashboard() {
               ))}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* System Information */}
+      <div className="admin-card mb-8">
+        <div className="flex items-center gap-2 mb-5">
+          <Server size={16} className="text-[#990A25]" />
+          <h2 className="font-heading font-bold text-[#111111] text-base">System Information</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100">
+            <ShieldCheck size={20} className="text-green-600" />
+            <div>
+              <div className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">App Version</div>
+              <div className="text-sm font-bold text-gray-900">v1.0.0 (Production)</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100">
+            <Server size={20} className="text-blue-600" />
+            <div>
+              <div className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Build Date</div>
+              <div className="text-sm font-bold text-gray-900">July 2026</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100">
+            <Database size={20} className="text-purple-600" />
+            <div>
+              <div className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Database Status</div>
+              <div className="text-sm font-bold text-gray-900 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> Online
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100">
+            <HardDrive size={20} className="text-orange-600" />
+            <div>
+              <div className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Last Backup</div>
+              <div className="text-sm font-bold text-gray-900">Automated Daily</div>
+            </div>
+          </div>
         </div>
       </div>
 

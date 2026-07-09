@@ -1,22 +1,39 @@
-import React from 'react';
+import { clsx } from 'clsx';
 
-interface CardProps {
-  children: React.ReactNode;
-  className?: string;
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  hover?: boolean;
   hoverEffect?: boolean;
-  onClick?: () => void;
+  gradient?: boolean;
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  children: React.ReactNode;
 }
 
+const paddingMap = {
+  none: '',
+  sm: 'p-4',
+  md: 'p-6',
+  lg: 'p-8',
+};
+
 export default function Card({
-  children,
+  hover = false,
+  hoverEffect,
+  gradient = false,
+  padding = 'none',
   className = '',
-  hoverEffect = true,
-  onClick,
+  children,
+  ...props
 }: CardProps) {
   return (
     <div
-      onClick={onClick}
-      className={`card ${hoverEffect ? 'card-hover-primary' : ''} ${onClick ? 'cursor-pointer' : ''} ${className}`}
+      className={clsx(
+        'card',
+        (hover || hoverEffect) && 'card-hover',
+        gradient && 'card-gradient-top',
+        paddingMap[padding],
+        className,
+      )}
+      {...props}
     >
       {children}
     </div>

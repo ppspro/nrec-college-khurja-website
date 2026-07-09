@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, Edit2, Trash2, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Edit2, Trash2, AlertCircle, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react';
 import api from '@/lib/api';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -25,10 +25,11 @@ interface AdminListPageProps<T> {
   columns: Column<T>[];
   searchPlaceholder?: string;
   extraParams?: Record<string, string>;
+  helpSection?: string;
 }
 
 export default function AdminListPage<T extends { _id: string }>({
-  title, subtitle, apiEndpoint, dataKey, newHref, editHref, columns, searchPlaceholder = 'Search...', extraParams = {},
+  title, subtitle, apiEndpoint, dataKey, newHref, editHref, columns, searchPlaceholder = 'Search...', extraParams = {}, helpSection,
 }: AdminListPageProps<T>) {
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
@@ -115,11 +116,22 @@ export default function AdminListPage<T extends { _id: string }>({
           <h1 className="admin-page-title">{title}</h1>
           {subtitle && <p className="text-sm text-[#666666] mt-0.5">{subtitle}</p>}
         </div>
-        <Link href={newHref}>
-          <Button variant="primary" className="text-sm">
-            Add New
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          <a
+            href={helpSection ? `/Admin_User_Manual.html#${helpSection}` : `/Admin_User_Manual.html`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Open help documentation for this page"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-[#8B0E2A] hover:bg-red-50 border border-gray-200 hover:border-[#8B0E2A]/30 transition-all"
+          >
+            <HelpCircle size={16} /> Help
+          </a>
+          <Link href={newHref}>
+            <Button variant="primary" className="text-sm">
+              Add New
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Search */}
@@ -131,7 +143,8 @@ export default function AdminListPage<T extends { _id: string }>({
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
               placeholder={searchPlaceholder}
-              className="form-input pl-9 py-2.5"
+              className="form-input py-2.5"
+              style={{ paddingLeft: '2.5rem' }}
             />
           </div>
           <Button type="submit" variant="primary" className="px-5 py-2.5">

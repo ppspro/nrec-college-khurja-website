@@ -3,13 +3,13 @@ import AdminListPage from '@/components/admin/AdminListPage';
 import { Download } from '@/types';
 export default function AdminDownloadsPage() {
   return (
-    <AdminListPage<Download>
+    <AdminListPage<Download> helpSection="downloads"
       title="Downloads"
       subtitle="Manage downloadable files and documents"
       apiEndpoint="/downloads"
       dataKey="downloads"
       newHref="/admin/downloads/new"
-      editHref={(d) => `/admin/downloads/${d._id}/edit`}
+      editHref={(d) => `/admin/downloads/edit?id=${d._id}`}
       searchPlaceholder="Search downloads..."
       columns={[
         { key: 'title', label: 'Title', render: (d) => <span className="font-medium">{d.title}</span> },
@@ -21,3 +21,4 @@ export default function AdminDownloadsPage() {
     />
   );
 }
+

@@ -1,0 +1,21 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Disable directory slash to allow .html serving
+  DirectorySlash Off
+
+  # Prevent directory listing
+  Options -Indexes
+
+  # Serve corresponding .html files for clean URLs (e.g. /about -> /about.html)
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+
+  # If the requested file or directory exists physically, serve it directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Fallback all other missing routes to 404.html
+  ErrorDocument 404 /404.html
+</IfModule>

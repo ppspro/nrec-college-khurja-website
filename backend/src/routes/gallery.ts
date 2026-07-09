@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { getAlbums, getAlbumImages, getAllAlbumsAdmin, createAlbum, updateAlbum, deleteAlbum, addImages, deleteImage } from '../controllers/galleryController';
+import { getAlbums, getAlbumImages, getAllAlbumsAdmin, createAlbum, updateAlbum, deleteAlbum, addImages, deleteImage, getAllImages } from '../controllers/galleryController';
 import { protect } from '../middleware/auth';
 import { upload } from '../middleware/upload';
 
 const router = Router();
 
 router.get('/', getAlbums);
+router.get('/images/all', getAllImages);
 router.get('/admin/all', protect, getAllAlbumsAdmin);
 router.get('/:slug', getAlbumImages);
 

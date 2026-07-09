@@ -1,73 +1,83 @@
 'use client';
 
-import Image from 'next/image';
 import { Quote } from 'lucide-react';
+import SafeImage from '@/components/ui/SafeImage';
+import ScrollReveal from '@/components/ui/ScrollReveal';
 
-export default function PrincipalMessage() {
+interface PrincipalMessageProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  message?: any;
+}
+
+const fallbackMessage = {
+  quote: '"Education is not merely the transfer of information but the transformation of character."',
+  paragraphs: [
+    'Welcome to NREC College — an institution that stands as a symbol of academic heritage, intellectual aspiration, and unwavering commitment to quality education.',
+    'Since its establishment in 1901, this college has nurtured thousands of students who have gone on to distinguish themselves in every walk of life — from public service to research, from entrepreneurship to the arts.',
+    'We strive to create an environment where curiosity is celebrated, excellence is pursued, and every student discovers their true potential. I extend a warm welcome to all prospective students and invite them to become part of our proud community.',
+  ],
+  name: 'Prof. K.D. Sharma',
+  designation: 'Principal',
+  image: '/screenshots/1671872069WhatsApp%20Image%202022-12-17%20at%205.49.18%20PM.jpeg'
+};
+
+export default function PrincipalMessage({ message }: PrincipalMessageProps) {
+  const data = message || fallbackMessage;
+
   return (
-    <section className="bg-light section-py relative overflow-hidden">
-      {/* Decorative background element */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-[#990A25]/5 skew-x-12 translate-x-20" />
-      <div className="container-nrec relative z-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-center">
-            {/* Photo */}
-            <div className="md:col-span-5 flex flex-col items-center md:items-start relative">
-              <div className="relative w-full max-w-sm mx-auto">
-                <div className="w-full aspect-[4/5] rounded-[var(--radius-img)] overflow-hidden shadow-lg border border-[#E7E7E7] bg-white relative">
-                  <Image 
-                    src="/images/principal.png" 
-                    alt="Prof. Rajendra Singh" 
-                    fill 
-                    className="object-cover" 
-                    sizes="(max-width: 768px) 100vw, 400px"
-                  />
-                </div>
-                {/* Name card */}
-                <div className="absolute -bottom-6 right-4 bg-white rounded-xl px-6 py-4 shadow-xl border border-[#E7E7E7] z-20 transition-transform hover:-translate-y-1">
-                  <div className="font-heading font-bold text-[#111111] text-lg">Prof. Rajendra Singh</div>
-                  <div className="text-xs text-[#990A25] font-medium">Principal, NREC College</div>
-                </div>
+    <section id="principal" className="bg-[#F8F5F0] section-py relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#8B0E2A 2px, transparent 2px)', backgroundSize: '32px 32px' }} />
+      
+      <div className="container-nrec relative">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+          
+          {/* Left Column: Image */}
+          <div className="lg:col-span-5 relative">
+            <ScrollReveal direction="right">
+              <div className="aspect-[4/5] rounded-[24px] overflow-hidden bg-white shadow-[0_20px_60px_rgba(0,0,0,0.1)] relative z-10 border-8 border-white">
+                <SafeImage
+                  fallbackKey="principal"
+                  src={data.image}
+                  alt={data.name}
+                  fill
+                  className="object-cover object-top"
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                />
               </div>
-            </div>
-
-            {/* Message */}
-            <div className="md:col-span-7 pt-12 md:pt-0">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-px bg-[#C6A04D]" />
-                <span className="section-label !mb-0">Principal&apos;s Message</span>
-              </div>
-              <h2 className="section-title mb-4">
-                A Word From<br />Our Principal
-              </h2>
-              <div className="divider-accent mb-6" />
-
-              {/* Quote icon */}
-              <div className="relative mt-8">
-                <Quote className="text-[#990A25]/10 absolute -top-4 -left-4 w-16 h-16" />
-                <div className="text-body leading-relaxed space-y-5 pl-8 text-[#444]">
-                  <p>
-                    Welcome to NREC College — an institution that stands as a proud symbol of academic heritage and intellectual aspiration. For over 120 years, we have been committed to nurturing not just scholars, but complete human beings.
-                  </p>
-                  <p>
-                    Our students are at the heart of everything we do. We believe that quality education, combined with strong values and a spirit of inquiry, prepares young minds to meet the challenges of a rapidly changing world.
-                  </p>
-                  <p className="font-medium text-[#2E2E2E]">
-                    I invite you to join our community and be part of a tradition that has shaped the lives of thousands across generations.
-                  </p>
-                </div>
-              </div>
-
-              {/* Signature block */}
-              <div className="mt-10 flex items-center gap-5">
-                <div className="w-16 h-0.5 bg-gradient-to-r from-[#990A25] to-[#C6A04D]" />
-                <div>
-                  <div className="font-heading font-bold text-[#111111] text-xl">Prof. Rajendra Singh</div>
-                  <div className="text-sm text-[#666666] font-medium tracking-wide">M.A., Ph.D. | Principal</div>
-                </div>
-              </div>
-            </div>
+              
+              {/* Decorative Frame */}
+              <div className="absolute -bottom-6 -left-6 w-full h-full border-[3px] border-[#B8860B] rounded-[24px] -z-10" />
+            </ScrollReveal>
           </div>
+          
+          {/* Right Column: Content */}
+          <div className="lg:col-span-7">
+            <ScrollReveal direction="left">
+              <div className="mb-8">
+                <Quote className="text-[#8B0E2A]/10 w-24 h-24 absolute -top-10 -left-6 -z-10 transform -rotate-12" />
+                <span className="section-label text-[#8B0E2A]">Message from the Principal</span>
+                <h2 className="font-heading font-bold text-3xl md:text-4xl lg:text-[2.75rem] text-[#111111] mb-8 leading-[1.15] tracking-tight">
+                  {data.quote}
+                </h2>
+              </div>
+              
+              <div className="text-gray-600 space-y-6 text-lg font-light leading-relaxed mb-10">
+                {data.paragraphs.map((p: string, idx: number) => (
+                  <p key={idx}>{p}</p>
+                ))}
+              </div>
+              
+              <div className="flex items-center gap-6 pt-6 border-t border-gray-200">
+                <div className="w-16 h-[2px] bg-[#B8860B]" />
+                <div>
+                  <div className="text-2xl font-heading font-bold text-[#111111]">{data.name}</div>
+                  <div className="text-[#8B0E2A] font-semibold text-sm tracking-[0.15em] uppercase mt-1">{data.designation}</div>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+          
         </div>
       </div>
     </section>

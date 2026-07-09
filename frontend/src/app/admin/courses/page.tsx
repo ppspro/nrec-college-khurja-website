@@ -3,13 +3,13 @@ import AdminListPage from '@/components/admin/AdminListPage';
 import { Course } from '@/types';
 export default function AdminCoursesPage() {
   return (
-    <AdminListPage<Course>
+    <AdminListPage<Course> helpSection="courses"
       title="Courses"
       subtitle="Manage all academic programmes"
       apiEndpoint="/courses"
       dataKey="courses"
       newHref="/admin/courses/new"
-      editHref={(c) => `/admin/courses/${c._id}/edit`}
+      editHref={(c) => `/admin/courses/edit?id=${c._id}`}
       searchPlaceholder="Search courses..."
       columns={[
         { key: 'name', label: 'Course Name', render: (c) => <span className="font-semibold">{c.name}</span> },
@@ -22,3 +22,4 @@ export default function AdminCoursesPage() {
     />
   );
 }
+

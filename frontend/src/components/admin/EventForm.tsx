@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save } from 'lucide-react';
 import api from '@/lib/api';
@@ -15,8 +15,10 @@ const DEFAULT = {
   isPublished: true, isFeatured: false,
 };
 
-export default function EventForm({ params }: { params: Promise<{ id?: string }> }) {
+export default function EventForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const unwrappedParams = { id: searchParams.get('id') || undefined };
   const [form, setForm] = useState(DEFAULT);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -39,7 +41,7 @@ export default function EventForm({ params }: { params: Promise<{ id?: string }>
   };
 
   useEffect(() => {
-    params.then((p) => {
+    Promise.resolve(unwrappedParams).then((p) => {
       const eventId = p.id;
       if (eventId) {
         setId(eventId);

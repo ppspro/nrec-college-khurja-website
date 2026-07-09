@@ -7,7 +7,7 @@ import { Request, Response, NextFunction } from 'express';
 const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 
 // Ensure directories exist
-const dirs = ['logo', 'slider', 'gallery', 'faculty', 'curriculum', 'downloads', 'notices', 'news', 'pages'];
+const dirs = ['logo', 'slider', 'gallery', 'faculty', 'curriculum', 'downloads', 'notices', 'news', 'pages', 'media'];
 dirs.forEach((dir) => {
   const fullPath = path.join(UPLOAD_DIR, dir);
   if (!fs.existsSync(fullPath)) {
@@ -22,6 +22,8 @@ const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFil
     'image/jpeg',
     'image/png',
     'image/webp',
+    'image/svg+xml',
+    'image/gif',
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

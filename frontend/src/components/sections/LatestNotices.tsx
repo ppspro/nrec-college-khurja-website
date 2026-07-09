@@ -1,145 +1,139 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Bell, Pin, Paperclip, Calendar } from 'lucide-react';
-import { Notice } from '@/types';
-
-const CATEGORY_COLORS: Record<string, string> = {
-  General: '#666666',
-  Examination: '#DC2626',
-  Admission: '#2563EB',
-  Academic: '#059669',
-  Administrative: '#7C3AED',
-  Scholarship: '#D97706',
-  Sports: '#0891B2',
-  Cultural: '#C6A04D',
-};
+import { ArrowRight, Bell, Calendar, Pin, Paperclip } from 'lucide-react';
+import SectionTitle from '@/components/ui/SectionTitle';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import type { Notice } from '@/types';
+import { formatDate } from '@/lib/defaults';
 
 interface LatestNoticesProps {
-  notices: Notice[];
+  notices?: Notice[];
 }
 
+// Fallback dummy data if db is empty
+const fallbackNotices: Notice[] = [
+  { _id: '1', title: 'Admission Notice for B.A./B.Sc./B.Com. (Session 2024-25)', category: 'Admission', publishDate: new Date('2026-07-01').toISOString(), isPinned: true, content: '', attachment: '', isActive: true, expiryDate: null, createdAt: '' },
+  { _id: '2', title: 'Date Sheet for Annual Examination 2024 — All Programmes', category: 'Examination', publishDate: new Date('2026-07-01').toISOString(), isPinned: true, content: '', attachment: '', isActive: true, expiryDate: null, createdAt: '' },
+  { _id: '3', title: 'Scholarship Application Form — State Government Schemes', category: 'Scholarship', publishDate: new Date('2026-07-01').toISOString(), content: '', attachment: '', isPinned: false, isActive: true, expiryDate: null, createdAt: '' },
+  { _id: '4', title: 'Inter-College Sports Meet — Registration Open', category: 'Sports', publishDate: new Date('2026-07-01').toISOString(), content: '', attachment: '', isPinned: false, isActive: true, expiryDate: null, createdAt: '' },
+  { _id: '5', title: 'College Library — Extended Hours During Examination Period', category: 'Academic', publishDate: new Date('2026-07-01').toISOString(), content: '', attachment: '', isPinned: false, isActive: true, expiryDate: null, createdAt: '' }
+] as Notice[];
+
 export default function LatestNotices({ notices }: LatestNoticesProps) {
-  const displayed = notices.length > 0 ? notices.slice(0, 7) : [
-    { _id: '1', title: 'Admission Notice for B.A./B.Sc./B.Com. (Session 2024-25)', category: 'Admission', isPinned: true, publishDate: new Date().toISOString(), attachment: '', isActive: true },
-    { _id: '2', title: 'Date Sheet for Annual Examination 2024 — All Programmes', category: 'Examination', isPinned: false, publishDate: new Date().toISOString(), attachment: 'pdf', isActive: true },
-    { _id: '3', title: 'Scholarship Application Form — State Government Schemes', category: 'Scholarship', isPinned: false, publishDate: new Date().toISOString(), attachment: 'pdf', isActive: true },
-    { _id: '4', title: 'Inter-College Sports Meet — Registration Open', category: 'Sports', isPinned: false, publishDate: new Date().toISOString(), attachment: '', isActive: true },
-    { _id: '5', title: 'College Library — Extended Hours During Examination Period', category: 'Academic', isPinned: false, publishDate: new Date().toISOString(), attachment: '', isActive: true },
-  ];
+  const displayNotices = (!notices || notices.length === 0) ? fallbackNotices : notices;
 
   return (
-    <section className="bg-white section-py">
+    <section className="bg-white section-py relative">
       <div className="container-nrec">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
+          <SectionTitle
+            label="LATEST ANNOUNCEMENTS"
+            title="Notice Board"
+            className="mb-0"
+          />
+          <ScrollReveal direction="left">
+            <Link 
+              href="/notices" 
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 text-[14px] font-bold text-[#8B0E2A] border border-[#8B0E2A] rounded-full hover:bg-[#8B0E2A] hover:text-white transition-colors"
+            >
+              All Notices
+              <ArrowRight size={16} />
+            </Link>
+          </ScrollReveal>
+        </div>
 
-          {/* Notice Board */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <span className="section-label">Latest Announcements</span>
-                <h2 className="section-title">Notice Board</h2>
-                <div className="divider-accent" />
-              </div>
-              <Link href="/notices" className="btn btn-outline text-sm px-4 py-2 flex-shrink-0">
-                All Notices <ArrowRight size={14} />
-              </Link>
-            </div>
-
-            <div className="card divide-y divide-[#E7E7E7]/60">
-              {/* Header */}
-              <div className="flex items-center gap-3 px-6 py-5 bg-[#F9F9F9]/80 backdrop-blur-sm">
-                <Bell size={18} className="text-[#990A25]" />
-                <span className="text-[#111111] text-[15px] font-bold">Important Announcements</span>
-                <span className="ml-auto flex items-center gap-2">
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#990A25] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#990A25]"></span>
-                  </span>
-                  <span className="text-xs text-[#990A25] font-semibold uppercase tracking-wider">Live</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Left Column: Announcements */}
+          <div className="lg:col-span-8">
+            <div className="bg-white rounded-xl shadow-[0_2px_15px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden">
+              <div className="p-5 border-b border-gray-100 flex items-center gap-3">
+                <Bell size={20} className="text-[#8B0E2A]" />
+                <h3 className="font-bold text-gray-900 text-lg">Important Announcements</h3>
+                <span className="bg-rose-100 text-rose-600 text-[10px] font-black uppercase px-2 py-0.5 rounded-full tracking-wider flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse" />
+                  LIVE
                 </span>
               </div>
-
-              {displayed.map((notice) => (
-                <Link
-                  key={notice._id}
-                  href={`/notices`}
-                  className="flex items-start gap-4 px-5 py-4 hover:bg-[#F9F9F9] transition-colors group"
-                >
-                  {/* Pin indicator */}
-                  <div className="mt-1.5 flex-shrink-0">
-                    {notice.isPinned ? (
-                      <Pin size={15} className="text-[#990A25]" />
-                    ) : (
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#D1D5DB] mt-1.5" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider" style={{ color: CATEGORY_COLORS[notice.category] || '#666' }}>
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: CATEGORY_COLORS[notice.category] || '#666' }} />
-                        {notice.category}
-                      </span>
-                      {notice.attachment && (
-                        <Paperclip size={12} className="text-[#999] flex-shrink-0 ml-2" />
-                      )}
-                    </div>
-                    <p className="text-[15px] font-semibold text-[#111111] leading-snug group-hover:text-[#990A25] transition-colors line-clamp-2">
-                      {notice.title}
-                    </p>
-                    <div className="flex items-center gap-1.5 mt-2 text-xs font-medium text-[#666666]">
-                      <Calendar size={12} />
-                      {new Date(notice.publishDate).toLocaleDateString('en-IN', {
-                        day: 'numeric', month: 'short', year: 'numeric'
-                      })}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick links sidebar */}
-          <div className="flex flex-col gap-6">
-            {/* Admission CTA */}
-            <div className="card overflow-hidden" style={{ background: 'linear-gradient(135deg, #990A25, #7A081E)' }}>
-              <div className="p-6 text-white">
-                <div className="font-heading font-bold text-xl mb-2">Admissions Open</div>
-                <p className="text-red-200 text-sm mb-5">Session 2024-25. Apply before the last date.</p>
-                <Link href="/admissions" className="btn btn-white text-sm px-5 py-2.5">
-                  Apply Now <ArrowRight size={14} />
-                </Link>
-              </div>
-            </div>
-
-            {/* Download quick links */}
-            <div className="card p-5">
-              <h4 className="font-heading font-semibold text-[#111111] text-base mb-4">Important Downloads</h4>
-              <div className="space-y-3">
-                {[
-                  { label: 'Prospectus 2024-25', cat: 'Prospectus' },
-                  { label: 'Admission Form', cat: 'Admission Forms' },
-                  { label: 'Academic Calendar', cat: 'Academic Calendar' },
-                  { label: 'Examination Schedule', cat: 'Examination Forms' },
-                ].map((item) => (
-                  <Link
-                    key={item.label}
-                    href={`/downloads?category=${encodeURIComponent(item.cat)}`}
-                    className="flex items-center gap-3 py-2.5 px-3 rounded-xl hover:bg-[#F9F9F9] transition-colors group"
+              
+              <div className="divide-y divide-gray-100">
+                {displayNotices.slice(0, 5).map((notice, idx) => (
+                  <Link 
+                    key={notice._id || idx} 
+                    href={`/notices/${notice._id}`}
+                    className="block p-5 hover:bg-gray-50 transition-colors group"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-[#990A25]/8 flex items-center justify-center flex-shrink-0">
-                      <Paperclip size={14} className="text-[#990A25]" />
+                    <div className="flex items-start gap-4">
+                      <div className="mt-1">
+                        {notice.isPinned ? (
+                          <Pin size={16} className="text-[#8B0E2A]" />
+                        ) : (
+                          <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-2" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <div className={`w-2 h-2 rounded-full ${notice.category === 'Admission' ? 'bg-blue-500' : (notice.category === 'Examination' ? 'bg-red-500' : (notice.category === 'Scholarship' ? 'bg-amber-500' : 'bg-emerald-500'))}`} />
+                          <span className={`text-[11px] font-bold uppercase tracking-wider ${notice.category === 'Admission' ? 'text-blue-600' : (notice.category === 'Examination' ? 'text-red-600' : (notice.category === 'Scholarship' ? 'text-amber-600' : 'text-emerald-600'))}`}>
+                            {notice.category || 'GENERAL'}
+                          </span>
+                        </div>
+                        <h4 className={`text-[15px] font-bold mb-2 group-hover:text-[#8B0E2A] transition-colors leading-tight ${(notice.category === 'Examination') ? 'text-[#8B0E2A]' : 'text-gray-900'}`}>
+                          {notice.title}
+                        </h4>
+                        <div className="flex items-center gap-2 text-[12px] font-medium text-gray-500">
+                          <Calendar size={13} />
+                          <span>{notice.publishDate ? formatDate(notice.publishDate) : '1 Jul 2026'}</span>
+                        </div>
+                      </div>
                     </div>
-                    <span className="text-sm text-[#2E2E2E] group-hover:text-[#990A25] transition-colors font-medium">{item.label}</span>
-                    <ArrowRight size={12} className="ml-auto text-[#999] group-hover:text-[#990A25] transition-colors" />
                   </Link>
                 ))}
               </div>
-              <Link href="/downloads" className="btn btn-outline w-full justify-center mt-4 text-sm py-2.5">
-                All Downloads
-              </Link>
             </div>
           </div>
+
+          {/* Right Column: Admissions & Downloads */}
+          <div className="lg:col-span-4 space-y-6">
+            
+            {/* Admissions Callout */}
+            <div className="bg-[#8B0E2A] rounded-xl p-6 text-white shadow-lg relative overflow-hidden">
+              <div className="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+              <h3 className="font-bold text-xl mb-1 relative z-10">Admissions Open</h3>
+              <p className="text-white/80 text-[13px] mb-4 relative z-10">Session 2024-25. Apply before the last date.</p>
+              <Link href="/admissions" className="inline-flex items-center gap-1.5 text-[14px] font-bold bg-white px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors relative z-10" style={{ color: '#8B0E2A' }}>
+                Apply Now <ArrowRight size={16} />
+              </Link>
+            </div>
+
+            {/* Downloads List */}
+            <div className="bg-white rounded-xl shadow-[0_2px_15px_rgba(0,0,0,0.04)] border border-gray-100 overflow-hidden flex flex-col">
+              <div className="p-5 border-b border-gray-100">
+                <h3 className="font-bold text-gray-900 text-lg">Important Downloads</h3>
+              </div>
+              <div className="divide-y divide-gray-50 flex-1">
+                {['Prospectus 2024-25', 'Admission Form', 'Academic Calendar', 'Examination Schedule'].map((item, idx) => (
+                  <Link key={idx} href="/downloads" className="flex items-center gap-3 p-4 hover:bg-gray-50 transition-colors group">
+                    <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform">
+                      <Paperclip size={14} />
+                    </div>
+                    <span className="text-[14px] font-medium text-gray-700 group-hover:text-[#8B0E2A] transition-colors">{item}</span>
+                    <ArrowRight size={14} className="ml-auto text-gray-400 group-hover:text-[#8B0E2A] group-hover:translate-x-1 transition-all" />
+                  </Link>
+                ))}
+              </div>
+              <div className="p-4 border-t border-gray-100 mt-auto bg-gray-50">
+                <Link href="/downloads" className="block text-center text-[13px] font-bold text-[#8B0E2A] hover:underline">
+                  All Downloads
+                </Link>
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </div>
     </section>

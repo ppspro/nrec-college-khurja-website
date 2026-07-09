@@ -2,13 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Clock, Users, Search, Filter, ArrowRight } from 'lucide-react';
-import api from '@/lib/api';
+import { Clock, Users, ArrowRight, GraduationCap } from 'lucide-react';
+import api, { uploadsUrl } from '@/lib/api';
 import { Course } from '@/types';
 import PageBanner from '@/components/ui/PageBanner';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import SafeImage from '@/components/ui/SafeImage';
+import EmptyState from '@/components/ui/EmptyState';
+import { truncate } from '@/lib/defaults';
 
 const LEVELS = ['all', 'UG', 'PG', 'Diploma', 'Certificate', 'PhD'];
-const LEVEL_COLORS: Record<string, string> = { UG: '#111111', PG: '#990A25', Diploma: '#C6A04D', Certificate: '#666666', PhD: '#111111' };
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -39,9 +42,7 @@ export default function CoursesPage() {
         breadcrumbs={breadcrumbs}
       />
 
-      <section className="bg-white section-py relative">
-        <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
-        
+      <section className="bg-[#F8F5F0] section-py relative">
         <div className="container-nrec relative">
           {/* Filter */}
           <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
@@ -49,10 +50,10 @@ export default function CoursesPage() {
               <button
                 key={l}
                 onClick={() => setLevel(l)}
-                className={`px-6 py-2.5 rounded-full text-sm font-semibold tracking-wider uppercase transition-all duration-300 ${
+                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
                   level === l 
-                    ? 'bg-[#111111] text-white shadow-md' 
-                    : 'bg-white border border-[#E7E7E7] text-[#666666] hover:border-[#111111] hover:text-[#111111]'
+                    ? 'bg-[#8B0E2A] text-white shadow-md' 
+                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
                 }`}
               >
                 {l === 'all' ? 'All Levels' : l}
@@ -62,52 +63,80 @@ export default function CoursesPage() {
 
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton h-64 rounded-2xl" />)}
+              {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton h-96 rounded-[20px]" />)}
             </div>
           ) : courses.length === 0 ? (
-            <div className="text-center py-20 text-[#666666]">No courses found.</div>
+            <EmptyState title="No courses found" description="Try selecting a different level or check back later." />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {courses.map((course, idx) => {
-                const color = LEVEL_COLORS[course.level] || '#666';
-                const dept = typeof course.department === 'object' ? (course.department as { name: string }).name : '';
+                const dept = typeof course.department === 'object' && course.department !== null ? course.department.name : 'General';
                 return (
-                  <Link key={course._id} href={`/courses/${course.slug}`} className="group flex flex-col h-full bg-white border border-[#E7E7E7] rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 relative">
-                    {/* Top Accent Line */}
-                    <div className="h-1 w-full transition-colors duration-300" style={{ background: color }} />
-                    
-                    <div className="p-8 flex flex-col flex-1 relative z-10">
-                      <div className="flex items-start justify-between mb-6">
-                        <span className="text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded text-white" style={{ background: color }}>
-                          {course.level}
-                        </span>
-                        {dept && <span className="text-xs text-[#666666] font-medium tracking-wide text-right max-w-[60%] line-clamp-2">{dept}</span>}
-                      </div>
-                      
-                      <h3 className="font-heading font-bold text-[#111111] text-xl mb-3 group-hover:text-[#990A25] transition-colors leading-tight">
-                        {course.name}
-                      </h3>
-                      
-                      <p className="text-[#666666] text-sm flex-1 line-clamp-3 font-light mb-8">
-                        {course.description}
-                      </p>
-                      
-                      <div className="mt-auto pt-5 border-t border-[#E7E7E7]/60 flex items-center justify-between">
-                        <div className="flex items-center gap-4 text-xs font-medium text-[#666666]">
-                          <span className="flex items-center gap-1.5"><Clock size={14} className="text-[#C6A04D]" />{course.duration}</span>
-                          {course.totalSeats > 0 && <span className="flex items-center gap-1.5"><Users size={14} className="text-[#C6A04D]" />{course.totalSeats} Seats</span>}
-                        </div>
-                        <div className="w-8 h-8 rounded-full border border-[#E7E7E7] flex items-center justify-center text-[#990A25] group-hover:bg-[#990A25] group-hover:border-[#990A25] group-hover:text-white transition-all duration-300">
-                          <ArrowRight size={14} />
+                  <ScrollReveal key={course._id} direction="up" delay={0.05 * (idx % 3)} className="h-full">
+                    <div className="card card-hover-primary h-full flex flex-col group bg-white border-0 shadow-[0_4px_20px_rgba(0,0,0,0.04)] p-0 overflow-hidden">
+                      {/* Image */}
+                      <div className="relative aspect-[16/10] overflow-hidden">
+                        <SafeImage
+                          fallbackKey="course"
+                          src={uploadsUrl(course.image)}
+                          alt={course.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-700"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
+                        
+                        {/* Badges */}
+                        <div className="absolute top-4 left-4 flex gap-2">
+                          <span className="badge bg-[#B8860B] text-white border-none shadow-sm">
+                            {course.level}
+                          </span>
+                          {course.type && (
+                            <span className="badge bg-white/90 text-[#111111] backdrop-blur-sm shadow-sm">
+                              {course.type}
+                            </span>
+                          )}
                         </div>
                       </div>
+
+                      {/* Content */}
+                      <div className="p-8 flex flex-col flex-grow">
+                        <div className="flex items-center gap-2 text-[#8B0E2A] text-xs font-bold tracking-wider uppercase mb-3">
+                          <GraduationCap size={14} />
+                          {dept}
+                        </div>
+
+                        <h3 className="font-heading font-bold text-xl text-[#111111] mb-4 group-hover:text-[#8B0E2A] transition-colors leading-tight">
+                          {course.name}
+                        </h3>
+
+                        <p className="text-gray-500 text-sm leading-relaxed mb-6 flex-grow font-light">
+                          {truncate(course.description || '', 120)}
+                        </p>
+
+                        <div className="flex items-center gap-6 py-4 border-t border-gray-100 mb-6 text-sm text-gray-600">
+                          <div className="flex items-center gap-2">
+                            <Clock size={16} className="text-[#B8860B]" />
+                            <span className="font-medium">{course.duration}</span>
+                          </div>
+                          {course.totalSeats > 0 && (
+                            <div className="flex items-center gap-2">
+                              <Users size={16} className="text-[#B8860B]" />
+                              <span className="font-medium">{course.totalSeats} Seats</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <Link
+                          href={`/courses/${course.slug}`}
+                          className="btn btn-outline w-full rounded-xl group-hover:bg-[#8B0E2A] group-hover:text-white transition-all duration-300"
+                        >
+                          View Details
+                          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                      </div>
                     </div>
-                    
-                    {/* Subtle watermark in card background */}
-                    <div className="absolute -right-4 -bottom-4 opacity-[0.02] text-9xl font-heading font-bold pointer-events-none group-hover:opacity-[0.04] transition-opacity">
-                      {String(idx + 1).padStart(2, '0')}
-                    </div>
-                  </Link>
+                  </ScrollReveal>
                 );
               })}
             </div>

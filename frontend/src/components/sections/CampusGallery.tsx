@@ -1,114 +1,124 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowRight, Play } from 'lucide-react';
-import { GalleryImage, GalleryAlbum } from '@/types';
+import { Maximize2, ArrowRight } from 'lucide-react';
 import { uploadsUrl } from '@/lib/api';
+import { safeImage } from '@/lib/defaults';
+import SectionTitle from '@/components/ui/SectionTitle';
+import ScrollReveal from '@/components/ui/ScrollReveal';
+import SafeImage from '@/components/ui/SafeImage';
+import type { GalleryImage, GalleryAlbum } from '@/types';
 
 interface CampusGalleryProps {
-  images: GalleryImage[];
-  albums: GalleryAlbum[];
+  images?: GalleryImage[];
+  albums?: GalleryAlbum[];
 }
 
-export default function CampusGallery({ images, albums }: CampusGalleryProps) {
-  const displayImages = images.slice(0, 6);
-  // If no real images, show gradient placeholders
-  const showPlaceholders = displayImages.length === 0;
+const fallbackImages = [
+  { id: '1', url: '/screenshots/1671872113WhatsApp%20Image%202022-12-17%20at%205.49.06%20PM.jpeg', caption: 'Campus Gallery 1' },
+  { id: '2', url: '/screenshots/16700442351.%20(6).jpg', caption: 'Campus Gallery 2' },
+  { id: '3', url: '/screenshots/16700442351.%20(6).jpg', caption: 'Campus Gallery 3' },
+  { id: '4', url: '/screenshots/1670044469DSC_0563.jpg', caption: 'Campus Gallery 4' },
+  { id: '5', url: '/screenshots/16700441271.%20(12).jpg', caption: 'Campus Gallery 5' },
+];
 
-  const placeholders = [
-    { size: 'row-span-2', label: 'Main Building', color: 'from-[#990A25] to-[#7A081E]' },
-    { size: '', label: 'Library', color: 'from-[#111] to-[#333]' },
-    { size: '', label: 'Science Lab', color: 'from-[#C6A04D] to-[#9a7a28]' },
-    { size: '', label: 'Auditorium', color: 'from-[#2563EB] to-[#1d4ed8]' },
-    { size: '', label: 'Sports Ground', color: 'from-[#059669] to-[#047857]' },
-    { size: '', label: 'Campus Life', color: 'from-[#7C3AED] to-[#6d28d9]' },
-  ];
+export default function CampusGallery({ images, albums }: CampusGalleryProps) {
+  // Take up to 6 featured images
+  let allImages = (images || []).slice(0, 6).map(img => ({
+    url: img.image,
+    caption: img.title || img.description || 'Campus Life',
+    id: img._id,
+    fallback: undefined,
+    color: undefined
+  }));
+
+  if (!allImages || allImages.length === 0) {
+    allImages = fallbackImages as any;
+  }
 
   return (
-    <section className="bg-light section-py">
-      <div className="container-nrec">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
-          <div>
-            <span className="section-label">Campus Life</span>
-            <h2 className="section-title">Photo Gallery</h2>
-            <div className="divider-accent" />
-          </div>
-          <Link href="/gallery" className="btn btn-outline flex-shrink-0 self-start md:self-auto">
-            View All <ArrowRight size={16} />
-          </Link>
+    <section className="bg-[#0A0A0A] section-py relative overflow-hidden bg-white">
+      {/* Background override to white as per screenshot */}
+      <div className="absolute inset-0 bg-[#F9F9F9] pointer-events-none" />
+
+      <div className="container-nrec relative z-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
+          <SectionTitle
+            label="CAMPUS LIFE"
+            title="Photo Gallery"
+            dark={false}
+            className="mb-0"
+          />
+          <ScrollReveal direction="left">
+            <Link 
+              href="/gallery" 
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 text-[14px] font-bold text-[#8B0E2A] border border-[#8B0E2A] rounded-full hover:bg-[#8B0E2A] hover:text-white transition-colors"
+            >
+              View All
+              <ArrowRight size={16} />
+            </Link>
+          </ScrollReveal>
         </div>
 
-        {/* Masonry grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:h-[480px]">
-          {showPlaceholders ? (
-            <>
-              {/* Large featured */}
-              <div className="col-span-2 row-span-2 relative overflow-hidden group cursor-pointer" style={{ borderRadius: 'var(--radius-img)' }}>
-                <Image src="/images/campus-life.png" alt="Main Building" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                  <span className="text-white font-semibold text-lg drop-shadow-md">Campus Life</span>
-                </div>
-              </div>
-              {/* Second featured placeholder */}
-              <div className="relative overflow-hidden group cursor-pointer" style={{ borderRadius: 'var(--radius-img)' }}>
-                <Image src="/images/hero-campus.png" alt="Library" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                  <span className="text-white font-semibold text-sm drop-shadow-md">Historic Library</span>
-                </div>
-              </div>
-              {/* Remaining smaller images */}
-              {placeholders.slice(2).map((p, i) => (
-                <div key={i} className="relative overflow-hidden group cursor-pointer" style={{ borderRadius: 'var(--radius-img)' }}>
-                  <div className={`w-full h-full bg-gradient-to-br ${p.color} flex items-center justify-center`}>
-                    <span className="font-heading text-white text-2xl font-bold opacity-20">{p.label[0]}</span>
-                  </div>
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-white font-semibold text-xs">{p.label}</span>
-                  </div>
-                </div>
-              ))}
-            </>
-          ) : (
-            displayImages.map((img, i) => (
-              <div
-                key={img._id}
-                className={`relative overflow-hidden group cursor-pointer ${i === 0 ? 'col-span-2 row-span-2' : ''}`}
-                style={{ borderRadius: 'var(--radius-img)' }}
-              >
-                <Image
-                  src={uploadsUrl(img.thumbnail || img.image)}
-                  alt={img.title || 'Campus'}
+        {/* Staggered Grid Layout */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 lg:gap-4">
+          
+          {/* Main Large Image */}
+          <div className="col-span-2 row-span-2">
+            <ScrollReveal direction="up" className="h-full">
+              <div className="group relative w-full h-[300px] md:h-full rounded-2xl overflow-hidden bg-gray-200 shadow-md">
+                <SafeImage
+                  fallbackKey="campus"
+                  src={allImages[0]?.url || ''}
+                  alt={allImages[0]?.caption || ''}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                {img.videoUrl && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                      <Play size={18} className="text-[#990A25] ml-0.5" />
-                    </div>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-100" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className="text-white font-bold text-lg">{allImages[0]?.caption}</h3>
+                </div>
               </div>
-            ))
-          )}
-        </div>
-
-        {/* Album quick links */}
-        {albums.length > 0 && (
-          <div className="mt-8 flex flex-wrap gap-3">
-            {albums.slice(0, 5).map((album) => (
-              <Link
-                key={album._id}
-                href={`/gallery/${album.slug}`}
-                className="px-4 py-2 rounded-full border border-[#E7E7E7] text-sm text-[#666666] hover:border-[#990A25] hover:text-[#990A25] transition-colors"
-              >
-                {album.title}
-              </Link>
-            ))}
+            </ScrollReveal>
           </div>
-        )}
+
+          {/* Grid of smaller images */}
+          {allImages.slice(1, 5).map((image, index) => (
+            <div key={image.id} className="col-span-1 md:col-span-1 lg:col-span-1">
+              <ScrollReveal direction="up" delay={0.1 * (index + 1)} className="h-full">
+                <div className={`group relative w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-md ${(image as any).color || 'bg-gray-200'}`}>
+                  {!(image as any).fallback ? (
+                    <SafeImage
+                      fallbackKey="campus"
+                      src={image.url || ''}
+                      alt={image.caption || ''}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-4xl font-black text-white/40">{(image as any).fallback}</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                </div>
+              </ScrollReveal>
+            </div>
+          ))}
+
+          {/* 6th item (purple box) */}
+          <div className="col-span-1 md:col-span-1 lg:col-span-1">
+            <ScrollReveal direction="up" delay={0.5} className="h-full">
+              <div className="group relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-purple-600 shadow-md flex items-center justify-center">
+                <span className="text-4xl font-black text-white/40">C</span>
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
       </div>
     </section>
   );

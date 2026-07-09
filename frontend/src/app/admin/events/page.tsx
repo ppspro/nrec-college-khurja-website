@@ -3,13 +3,13 @@ import AdminListPage from '@/components/admin/AdminListPage';
 import { Event } from '@/types';
 export default function AdminEventsPage() {
   return (
-    <AdminListPage<Event>
+    <AdminListPage<Event> helpSection="events"
       title="Events"
       subtitle="Manage college events, seminars, and activities"
       apiEndpoint="/events"
       dataKey="events"
       newHref="/admin/events/new"
-      editHref={(e) => `/admin/events/${e._id}/edit`}
+      editHref={(e) => `/admin/events/edit?id=${e._id}`}
       searchPlaceholder="Search events..."
       columns={[
         { key: 'title', label: 'Title', render: (e) => <span className="font-medium line-clamp-2 max-w-xs">{e.title}</span> },
@@ -21,3 +21,4 @@ export default function AdminEventsPage() {
     />
   );
 }
+

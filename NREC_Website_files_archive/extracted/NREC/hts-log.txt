@@ -1,0 +1,30 @@
+HTTrack3.49-2+htsswf+htsjava launched on Wed, 08 Jul 2026 15:37:03 at https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/ +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar
+(winhttrack -qwC2%Ps2u1%s%uN0%I0p3DaK0H0%kf2A25000%f#f -F "Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)" -%F "<!-- Mirrored from %s%s by HTTrack Website Copier/3.x [XR&CO'2014], %s -->" -%l "en, *" https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/ -O1 "D:\NREC_Website\NREC" +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/syllabus.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/academic-calendar.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/members.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/aqar.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/action-taken-reports.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/feedback.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20250928133153im_/https://nrec.ac.in/1669975512slider-mainbg-003.jpg (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20250928131817im_/https://nrec.ac.in/1669972541slider-mainbg-004.jpg (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/console/image/1681720089IMG-20230417-WA0000.jpg (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/courses-single.html (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/bachelor-in-art.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/bachelor-in-commerce.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/bachelor-in-education.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/bachelor-in-law.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/bachelor-in-science.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/foundation-courses.php (from https://web.archive.org/web/20251012052828if_/https://nrec.ac.in/)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20240810002204im_/https://nrec.ac.in/images/prettyPhoto/default/sprite.png (from https://web.archive.org/web/20240810002204cs_/https://nrec.ac.in/css/prettyPhoto.css)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20240809004744im_/https://nrec.ac.in/images/bg-image/row-bgimage-1.jpg (from https://web.archive.org/web/20240809004744cs_/https://nrec.ac.in/css/shortcodes.css)
+15:53:28	Error: 	"NOT FOUND" (404) at link https://web.archive.org/web/20240809004744im_/https://nrec.ac.in/images/quote.png (from https://web.archive.org/web/20240809004744cs_/https://nrec.ac.in/css/shortcodes.css)
+
+HTTrack Website Copier/3.49-2 mirror complete in 16 minutes 25 seconds : 90 links scanned, 70 files written (35893025 bytes overall) [35493827 bytes received at 36034 bytes/sec], 4606216 bytes transferred using HTTP compression in 53 files, ratio 25%, 7.4 requests per connection
+(19 errors, 0 warnings, 0 messages)

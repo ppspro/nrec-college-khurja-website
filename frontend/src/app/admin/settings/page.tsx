@@ -5,6 +5,7 @@ import api from '@/lib/api';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import ToastContainer from '@/components/ui/ToastContainer';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 const DEFAULT = {
   collegeName: 'NREC College Khurja',
@@ -106,10 +107,11 @@ export default function SettingsPage() {
     <div className="max-w-4xl">
       <ToastContainer toasts={toasts} onClose={removeToast} />
 
-      <div className="mb-6">
-        <h1 className="admin-page-title">Website Settings</h1>
-        <p className="text-sm text-[#666666]">Configure global branding, details, social links, and SEO tags.</p>
-      </div>
+      <AdminPageHeader 
+        title="Website Settings" 
+        description="Configure global branding, details, social links, and SEO tags."
+        helpSection="settings"
+      />
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card hoverEffect={false} className="p-6 bg-white space-y-4">

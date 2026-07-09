@@ -1,0 +1,489 @@
+openapi: "3.0.3"
+info:
+  title: NREC College CMS API
+  description: |
+    REST API for NREC College Content Management System.
+    
+    ## Authentication
+    Use the `/api/auth/login` endpoint to obtain a Bearer token.
+    Include it in the `Authorization` header as `Bearer <token>` for protected routes.
+    
+    ## Rate Limiting
+    - General: 1000 requests per 15 minutes
+    - Auth: 20 attempts per 15 minutes
+  version: "1.0.0"
+  contact:
+    name: NREC College IT Team
+    email: info@nreccollege.ac.in
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:5000
+    description: Local Development
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    NewsItem:
+      type: object
+      properties:
+        _id: { type: string }
+        title: { type: string }
+        slug: { type: string }
+        content: { type: string }
+        image: { type: string }
+        category: { type: string }
+        status:
+          type: string
+          enum: [active, inactive]
+        publishedAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+    NoticeItem:
+      type: object
+      properties:
+        _id: { type: string }
+        title: { type: string }
+        content: { type: string }
+        category: { type: string }
+        attachment: { type: string }
+        status:
+          type: string
+          enum: [active, inactive]
+    EventItem:
+      type: object
+      properties:
+        _id: { type: string }
+        title: { type: string }
+        description: { type: string }
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+        venue: { type: string }
+        image: { type: string }
+        status:
+          type: string
+          enum: [active, inactive]
+    Department:
+      type: object
+      properties:
+        _id: { type: string }
+        name: { type: string }
+        code: { type: string }
+        description: { type: string }
+        hod: { type: string }
+        established: { type: string }
+        image: { type: string }
+        status:
+          type: string
+          enum: [active, inactive]
+    Course:
+      type: object
+      properties:
+        _id: { type: string }
+        name: { type: string }
+        code: { type: string }
+        department: { type: string }
+        duration: { type: string }
+        seats: { type: integer }
+        eligibility: { type: string }
+        description: { type: string }
+        type:
+          type: string
+          enum: [UG, PG, Diploma, Certificate]
+        status:
+          type: string
+          enum: [active, inactive]
+    Faculty:
+      type: object
+      properties:
+        _id: { type: string }
+        name: { type: string }
+        designation: { type: string }
+        department: { type: string }
+        qualification: { type: string }
+        experience: { type: string }
+        email: { type: string }
+        photo: { type: string }
+        status:
+          type: string
+          enum: [active, inactive]
+    PaginatedResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { type: object }
+        pagination:
+          type: object
+          properties:
+            page: { type: integer }
+            limit: { type: integer }
+            total: { type: integer }
+            pages: { type: integer }
+    ErrorResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        message: { type: string }
+
+paths:
+  /api/health:
+    get:
+      summary: Health Check
+      tags: [System]
+      responses:
+        "200":
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  status: { type: string }
+                  timestamp: { type: string }
+                  version: { type: string }
+
+  /api/auth/login:
+    post:
+      summary: Admin Login
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  example: admin@nreccollege.ac.in
+                password:
+                  type: string
+                  example: admin@123
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  token: { type: string }
+                  admin:
+                    type: object
+                    properties:
+                      id: { type: string }
+                      name: { type: string }
+                      email: { type: string }
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          description: Too many attempts
+
+  /api/auth/me:
+    get:
+      summary: Get Current Admin
+      tags: [Authentication]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Admin profile
+        "401":
+          description: Not authorized
+
+  /api/news:
+    get:
+      summary: List News
+      tags: [News]
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [active, inactive] }
+        - name: category
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of news
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedResponse"
+    post:
+      summary: Create News
+      tags: [News]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [title, content]
+              properties:
+                title: { type: string }
+                content: { type: string }
+                category: { type: string }
+                status:
+                  type: string
+                  enum: [active, inactive]
+                image:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: News created
+        "401":
+          description: Not authorized
+
+  /api/news/{id}:
+    get:
+      summary: Get News by ID
+      tags: [News]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: News item
+        "404":
+          description: Not found
+    put:
+      summary: Update News
+      tags: [News]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewsItem"
+      responses:
+        "200":
+          description: Updated
+    delete:
+      summary: Delete News
+      tags: [News]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Deleted
+
+  /api/notices:
+    get:
+      summary: List Notices
+      tags: [Notices]
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer }
+        - name: limit
+          in: query
+          schema: { type: integer }
+        - name: status
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Notices list
+    post:
+      summary: Create Notice
+      tags: [Notices]
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Created
+
+  /api/events:
+    get:
+      summary: List Events
+      tags: [Events]
+      responses:
+        "200":
+          description: Events list
+    post:
+      summary: Create Event
+      tags: [Events]
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Created
+
+  /api/departments:
+    get:
+      summary: List Departments
+      tags: [Departments]
+      responses:
+        "200":
+          description: Departments list
+    post:
+      summary: Create Department
+      tags: [Departments]
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Created
+
+  /api/courses:
+    get:
+      summary: List Courses
+      tags: [Courses]
+      responses:
+        "200":
+          description: Courses list
+    post:
+      summary: Create Course
+      tags: [Courses]
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Created
+
+  /api/faculty:
+    get:
+      summary: List Faculty
+      tags: [Faculty]
+      responses:
+        "200":
+          description: Faculty list
+    post:
+      summary: Add Faculty
+      tags: [Faculty]
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Created
+
+  /api/gallery:
+    get:
+      summary: List Gallery
+      tags: [Gallery]
+      responses:
+        "200":
+          description: Gallery items
+    post:
+      summary: Upload Gallery Images
+      tags: [Gallery]
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Uploaded
+
+  /api/downloads:
+    get:
+      summary: List Downloads
+      tags: [Downloads]
+      responses:
+        "200":
+          description: Downloads list
+    post:
+      summary: Upload File
+      tags: [Downloads]
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Uploaded
+
+  /api/settings:
+    get:
+      summary: Get Website Settings
+      tags: [Settings]
+      responses:
+        "200":
+          description: Settings object
+    put:
+      summary: Update Settings
+      tags: [Settings]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Updated
+
+  /api/media:
+    get:
+      summary: List Media Library
+      tags: [Media]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Media files list
+    post:
+      summary: Upload Media File
+      tags: [Media]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Uploaded
+
+  /api/contact:
+    post:
+      summary: Submit Contact Form
+      tags: [Contact]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, message]
+              properties:
+                name: { type: string }
+                email: { type: string }
+                phone: { type: string }
+                message: { type: string }
+      responses:
+        "200":
+          description: Message sent

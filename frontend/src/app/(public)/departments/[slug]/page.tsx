@@ -1,61 +1,101 @@
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { BookOpen, Users, Calendar, ArrowRight } from 'lucide-react';
 import { Faculty, Course } from '@/types';
+import PageBanner from '@/components/ui/PageBanner';
+import { API_URL as API } from '@/lib/api';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-async function getDepartment(slug: string) {
-  try {
-    const res = await fetch(`${API}/departments/${slug}`, { next: { revalidate: 300 } });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.department;
-  } catch { return null; }
-}
 
-async function getFaculty(deptId: string) {
-  try {
-    const res = await fetch(`${API}/faculty?department=${deptId}`, { next: { revalidate: 300 } });
-    const data = await res.json();
-    return data.faculty || [];
-  } catch { return []; }
-}
+export default function DepartmentDetailPage({ params }: { params: Promise<{ slug: string }> | { slug: string } }) {
+  const [dept, setDept] = useState<any>(null);
+  const [deptFaculty, setDeptFaculty] = useState<Faculty[]>([]);
+  const [deptCourses, setDeptCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [slug, setSlug] = useState<string>('');
 
-async function getCourses(deptId: string) {
-  try {
-    const res = await fetch(`${API}/courses?department=${deptId}`, { next: { revalidate: 300 } });
-    const data = await res.json();
-    return data.courses || [];
-  } catch { return []; }
-}
+  useEffect(() => {
+    const resolveParams = async () => {
+      try {
+        const resolvedParams = await Promise.resolve(params);
+        setSlug(resolvedParams.slug);
+      } catch (err) {
+        setSlug('');
+      }
+    };
+    resolveParams();
+  }, [params]);
 
-export default async function DepartmentDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const dept = await getDepartment(slug);
-  if (!dept) notFound();
+  useEffect(() => {
+    if (!slug) return;
+    const fetchData = async () => {
+      try {
+        const deptRes = await fetch(`${API}/departments/${slug}`);
+        if (!deptRes.ok) {
+          setError(true);
+          setLoading(false);
+          return;
+        }
+        const deptData = await deptRes.json();
+        setDept(deptData.department);
+        
+        // Fetch relations
+        const [facultyRes, coursesRes] = await Promise.all([
+          fetch(`${API}/faculty?department=${deptData.department._id}`).catch(() => null),
+          fetch(`${API}/courses?department=${deptData.department._id}`).catch(() => null)
+        ]);
+        
+        if (facultyRes?.ok) {
+          const fData = await facultyRes.json();
+          setDeptFaculty(fData.faculty || []);
+        }
+        if (coursesRes?.ok) {
+          const cData = await coursesRes.json();
+          setDeptCourses(cData.courses || []);
+        }
+      } catch (err) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [slug]);
 
-  const deptFaculty = await getFaculty(dept._id);
-  const deptCourses = await getCourses(dept._id);
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-[#8B0E2A] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (error || !dept) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+        <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">Department Not Found</h1>
+        <p className="text-gray-600 mb-8 max-w-md">The department details you are looking for might have been removed or unavailable.</p>
+        <Link href="/departments" className="px-6 py-2.5 bg-[#8B0E2A] text-white font-bold rounded-lg hover:bg-[#700B22] transition-colors">Browse All Departments</Link>
+      </div>
+    );
+  }
 
   return (
     <>
-      <div className="page-banner">
-        <div className="page-banner-accent" />
-        <div className="relative container-nrec">
-          <div className="flex items-center gap-2 mb-3 text-gray-400 text-sm">
-            <Link href="/" className="hover:text-[#C6A04D]">Home</Link>
-            <span>/</span>
-            <Link href="/departments" className="hover:text-[#C6A04D]">Departments</Link>
-            <span>/</span>
-            <span className="text-white">{dept.name}</span>
-          </div>
-          <h1 className="font-heading text-white font-bold text-4xl md:text-5xl">{dept.name}</h1>
-          {dept.headOfDepartment && (
-            <p className="text-gray-300 mt-3">Head of Department: {dept.headOfDepartment}</p>
-          )}
-        </div>
-      </div>
+      <PageBanner
+        title={dept.name}
+        breadcrumbs={[
+          { label: 'Departments', href: '/departments' },
+          { label: dept.name }
+        ]}
+      >
+        {dept.headOfDepartment && (
+          <p className="text-gray-300 mt-3">Head of Department: {dept.headOfDepartment}</p>
+        )}
+      </PageBanner>
 
       <section className="bg-white section-py">
         <div className="container-nrec">
@@ -85,13 +125,14 @@ export default async function DepartmentDetailPage({ params }: { params: Promise
                   <ul className="space-y-2">
                     {dept.objectives.map((obj: string, i: number) => (
                       <li key={i} className="flex items-start gap-2.5 text-[#666666]">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#990A25] mt-2 flex-shrink-0" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#8B0E2A] mt-2 flex-shrink-0" />
                         {obj}
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
+              
               {/* Faculty */}
               {deptFaculty.length > 0 && (
                 <div>
@@ -99,60 +140,58 @@ export default async function DepartmentDetailPage({ params }: { params: Promise
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {deptFaculty.slice(0, 4).map((f: Faculty) => (
                       <div key={f._id} className="card p-4 flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-[#F9F9F9] flex items-center justify-center font-heading font-bold text-[#990A25] text-lg flex-shrink-0">
-                          {f.name[0]}
+                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-[#8B0E2A] font-bold shrink-0">
+                          {f.name.charAt(0)}
                         </div>
                         <div>
-                          <div className="font-semibold text-[#111111] text-sm">{f.name}</div>
-                          <div className="text-xs text-[#666666]">{f.designation}</div>
-                          <div className="text-xs text-[#999]">{f.qualification}</div>
+                          <h4 className="font-bold text-sm">{f.name}</h4>
+                          <p className="text-xs text-[#666666]">{f.designation}</p>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <Link href="/faculty" className="inline-flex items-center gap-1 mt-4 text-sm text-[#990A25] font-semibold hover:gap-2 transition-all">
-                    View All Faculty <ArrowRight size={14} />
-                  </Link>
+                  {deptFaculty.length > 4 && (
+                    <Link href={`/faculty?department=${dept._id}`} className="inline-flex items-center gap-1 text-sm text-[#8B0E2A] font-bold mt-4 hover:underline">
+                      View all {deptFaculty.length} faculty members <ArrowRight size={14} />
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
 
             {/* Sidebar */}
             <div className="space-y-6">
-              <div className="card p-5">
-                <h4 className="font-heading font-bold text-[#111111] mb-4">Department Info</h4>
-                <div className="space-y-3 text-sm">
-                  {dept.establishedYear && (
-                    <div className="flex items-center gap-3 text-[#666666]">
-                      <Calendar size={15} className="text-[#990A25]" />
-                      Established: {dept.establishedYear}
-                    </div>
-                  )}
-                  {dept.headOfDepartment && (
-                    <div className="flex items-center gap-3 text-[#666666]">
-                      <Users size={15} className="text-[#990A25]" />
-                      HoD: {dept.headOfDepartment}
-                    </div>
-                  )}
+              <div className="card p-6 sticky top-24">
+                <h3 className="font-heading font-bold text-[#111111] mb-5">Department Details</h3>
+                <div className="space-y-4 text-sm">
                   <div className="flex items-center gap-3 text-[#666666]">
-                    <BookOpen size={15} className="text-[#990A25]" />
-                    {deptCourses.length} Course{deptCourses.length !== 1 ? 's' : ''}
+                    <Calendar size={15} className="text-[#8B0E2A]" />
+                    Established: <strong className="text-[#111111]">{dept.establishedYear || 'N/A'}</strong>
+                  </div>
+                  <div className="flex items-center gap-3 text-[#666666]">
+                    <Users size={15} className="text-[#8B0E2A]" />
+                    Faculty Strength: <strong className="text-[#111111]">{deptFaculty.length}</strong>
+                  </div>
+                  <div className="flex items-center gap-3 text-[#666666]">
+                    <BookOpen size={15} className="text-[#8B0E2A]" />
+                    Courses Offered: <strong className="text-[#111111]">{deptCourses.length}</strong>
                   </div>
                 </div>
+
+                {deptCourses.length > 0 && (
+                  <div className="mt-8 pt-6 border-t border-gray-100">
+                    <h4 className="font-bold mb-4 text-[15px]">Programs</h4>
+                    <div className="space-y-3">
+                      {deptCourses.map((c: Course) => (
+                        <Link key={c._id} href={`/courses/${c.slug}`} className="block group">
+                          <div className="text-sm font-bold text-[#333] group-hover:text-[#8B0E2A] transition-colors">{c.name}</div>
+                          <div className="text-xs text-[#666] mt-0.5">{c.level} • {c.duration}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              {deptCourses.length > 0 && (
-                <div className="card p-5">
-                  <h4 className="font-heading font-bold text-[#111111] mb-4">Courses Offered</h4>
-                  <div className="space-y-2">
-                    {deptCourses.map((c: Course) => (
-                      <Link key={c._id} href={`/courses/${c.slug}`} className="flex items-center justify-between py-2 hover:text-[#990A25] text-sm text-[#666666] transition-colors group">
-                        <span>{c.name}</span>
-                        <ArrowRight size={13} className="opacity-0 group-hover:opacity-100 transition-opacity text-[#990A25]" />
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>

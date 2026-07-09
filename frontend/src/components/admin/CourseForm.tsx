@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save } from 'lucide-react';
 import api from '@/lib/api';
@@ -15,8 +15,10 @@ const DEFAULT = {
   highlights: '', careerProspects: '', order: 0, isActive: true, isFeatured: false,
 };
 
-export default function CourseForm({ params }: { params: Promise<{ id?: string }> }) {
+export default function CourseForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const unwrappedParams = { id: searchParams.get('id') || undefined };
   const [form, setForm] = useState(DEFAULT);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(false);
@@ -43,7 +45,7 @@ export default function CourseForm({ params }: { params: Promise<{ id?: string }
       .then((res) => setDepartments(res.data.departments || []))
       .catch(() => addToast('Failed to load departments list', 'error'));
 
-    params.then((p) => {
+    Promise.resolve(unwrappedParams).then((p) => {
       const courseId = p.id;
       if (courseId) {
         setId(courseId);
@@ -134,12 +136,14 @@ export default function CourseForm({ params }: { params: Promise<{ id?: string }
           <h2 className="text-lg font-bold text-[#111111] mb-2 border-b border-black/5 pb-3">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="form-label">Course Name *</label>
+              <label className="form-label flex justify-between">Course Name *</label>
               <input required value={form.name} onChange={(e) => update('name', e.target.value)} className="form-input" placeholder="e.g. Bachelor of Science" />
+              <p className="text-[11px] text-gray-500 mt-1">The official full name of the course.</p>
             </div>
             <div>
               <label className="form-label">Course Code *</label>
               <input required value={form.code} onChange={(e) => update('code', e.target.value)} className="form-input" placeholder="e.g. B.Sc." />
+              <p className="text-[11px] text-gray-500 mt-1">Short abbreviation used in URLs and badges.</p>
             </div>
           </div>
 
@@ -183,6 +187,7 @@ export default function CourseForm({ params }: { params: Promise<{ id?: string }
           <div>
             <label className="form-label">Description</label>
             <textarea value={form.description} onChange={(e) => update('description', e.target.value)} className="form-input h-24 resize-none" placeholder="Provide course descriptions..." />
+            <p className="text-[11px] text-gray-500 mt-1">Detailed overview of what the student will learn.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -202,12 +207,13 @@ export default function CourseForm({ params }: { params: Promise<{ id?: string }
           <h2 className="text-lg font-bold text-[#111111] mb-2 border-b border-black/5 pb-3">Additional & Meta</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="form-label">Highlights (JSON Array)</label>
-              <input value={form.highlights} onChange={(e) => update('highlights', e.target.value)} className="form-input text-sm font-mono text-gray-600 bg-gray-50/50" placeholder='["Highlight 1", "Highlight 2"]' />
+              <label className="form-label">Key Highlights (JSON Array)</label>
+              <input value={form.highlights} onChange={(e) => update('highlights', e.target.value)} className="form-input text-sm font-mono text-gray-600 bg-gray-50/50" placeholder='["Top Placement", "UGC Approved"]' />
+              <p className="text-[11px] text-gray-500 mt-1">Must be formatted as a valid JSON array.</p>
             </div>
             <div>
               <label className="form-label">Career Prospects (JSON Array)</label>
-              <input value={form.careerProspects} onChange={(e) => update('careerProspects', e.target.value)} className="form-input text-sm font-mono text-gray-600 bg-gray-50/50" placeholder='["Prospect 1", "Prospect 2"]' />
+              <input value={form.careerProspects} onChange={(e) => update('careerProspects', e.target.value)} className="form-input text-sm font-mono text-gray-600 bg-gray-50/50" placeholder='["Software Engineer", "Data Scientist"]' />
             </div>
           </div>
 
@@ -225,7 +231,7 @@ export default function CourseForm({ params }: { params: Promise<{ id?: string }
           <div className="pt-2 flex flex-col sm:flex-row gap-6">
             <label className="flex items-center gap-3 cursor-pointer group">
               <input type="checkbox" checked={form.isActive} onChange={(e) => update('isActive', e.target.checked)} className="w-5 h-5 rounded border-[#E7E7E7] text-[#990A25] focus:ring-[#990A25] transition-all cursor-pointer" />
-              <span className="text-sm font-medium text-[#2E2E2E] group-hover:text-[#111111]">Active (Visible)</span>
+              <span className="text-sm font-medium text-[#2E2E2E] group-hover:text-[#111111]">Visibility (Publish to Website)</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer group">
               <input type="checkbox" checked={form.isFeatured} onChange={(e) => update('isFeatured', e.target.checked)} className="w-5 h-5 rounded border-[#E7E7E7] text-[#990A25] focus:ring-[#990A25] transition-all cursor-pointer" />
