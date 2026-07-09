@@ -4,6 +4,7 @@ import React from 'react';
 import CmsRenderer from '@/components/cms/CmsRenderer';
 import { Award, CheckCircle, Info, Calendar, FileCheck, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import SafeImage from '@/components/ui/SafeImage';
 
 interface StudentTemplateProps {
   slug: string;
@@ -14,8 +15,26 @@ export default function StudentTemplate({ slug, sections }: StudentTemplateProps
   const isAdmission = slug.includes('admission');
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-10">
       
+      {/* Hero Banner: Admissions Photography */}
+      {isAdmission && (
+        <div className="relative h-[220px] w-full rounded-[28px] overflow-hidden bg-gray-900">
+          <SafeImage
+            src="/images/generated/admissions.png"
+            fallbackKey="campus"
+            alt="NREC College Admissions"
+            fill
+            className="object-cover object-top opacity-85"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-end p-8">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#B8860B] mb-1">Enrollment Open 2025–26</span>
+            <h2 className="font-heading font-black text-2xl text-white leading-tight">Admissions at NREC College</h2>
+            <p className="text-gray-300 text-xs font-light mt-1">CCS University Affiliated | Khurja, Bulandshahr</p>
+          </div>
+        </div>
+      )}
+
       {/* Dynamic Admission Journey UI */}
       {isAdmission && (
         <div className="space-y-10">

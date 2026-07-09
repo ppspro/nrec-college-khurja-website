@@ -4,6 +4,7 @@ import React from 'react';
 import CmsRenderer from '@/components/cms/CmsRenderer';
 import { BookOpen, GraduationCap, Award, Landmark, GraduationCap as CapIcon } from 'lucide-react';
 import Link from 'next/link';
+import SafeImage from '@/components/ui/SafeImage';
 
 interface AcademicTemplateProps {
   slug: string;
@@ -12,20 +13,22 @@ interface AcademicTemplateProps {
 
 export default function AcademicTemplate({ slug, sections }: AcademicTemplateProps) {
   return (
-    <div className="space-y-12">
+    <div className="space-y-10">
       
-      {/* Program Explorer Layout Header Banner */}
-      <div className="bg-[#111111] text-white rounded-[28px] p-8 shadow-lg relative overflow-hidden">
-        <div className="absolute right-[-20px] top-[-20px] opacity-5 pointer-events-none">
-          <BookOpen size={160} />
+      {/* Hero: Classroom Photography */}
+      <div className="relative h-[240px] w-full rounded-[28px] overflow-hidden bg-gray-900">
+        <SafeImage
+          src="/images/generated/academics.png"
+          fallbackKey="department"
+          alt="NREC College Academics"
+          fill
+          className="object-cover opacity-90"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-end p-8">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#B8860B] mb-1">Academic Catalogue 2025–26</span>
+          <h2 className="font-heading font-black text-2xl sm:text-3xl text-white leading-tight">Curriculum Explorer</h2>
+          <p className="text-gray-300 text-xs font-light mt-1">CCS University Affiliated | Arts · Science · Commerce · Law</p>
         </div>
-        <span className="text-xs font-bold text-[#B8860B] uppercase tracking-widest block mb-2">
-          Academic Catalogue
-        </span>
-        <h3 className="font-heading font-black text-2xl md:text-3xl">Curriculum Explorer</h3>
-        <p className="text-gray-400 text-xs font-light max-w-xl mt-2 leading-relaxed">
-          NREC College offers standardized BA, B.Sc., B.Com., and BCA degrees affiliated to Chaudhary Charan Singh University, Meerut.
-        </p>
       </div>
 
       {/* Academic Statistics strip */}

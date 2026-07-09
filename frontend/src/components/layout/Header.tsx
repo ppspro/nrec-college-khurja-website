@@ -73,17 +73,17 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    label: 'Students Section',
+    label: 'Students',
     children: [
-      { label: 'Admission Rules', href: '/admission-rules', desc: 'Candidate rules & conducts' },
-      { label: 'Admission Process', href: '/admission-process', desc: 'Step-by-step registration roadmap' },
-      { label: 'Fee Structure', href: '/fee-structure', desc: 'Subsidized fees catalog' },
-      { label: 'Seats', href: '/seats', desc: 'Approved seat allocations matrix' },
-      { label: 'Scholarship', href: '/scholarship', desc: 'State & central grants' },
-      { label: 'Student Feedback', href: '/student-feedback', desc: 'Evaluation surveys' },
-      { label: 'Student Grievance', href: '/student-grievance', desc: 'Grievance cell forms' },
-      { label: 'Anti Ragging', href: '/anti-ragging', desc: 'Disciplinary rules & cells' },
-      { label: 'Placements', href: '/placements', desc: 'Recruiter statistics' },
+      { label: 'Admission Rules', href: '/admission-rules' },
+      { label: 'Admission Process', href: '/admission-process' },
+      { label: 'Fee Structure', href: '/fee-structure' },
+      { label: 'Seats', href: '/seats' },
+      { label: 'Scholarship', href: '/scholarship' },
+      { label: 'Student Feedback', href: '/student-feedback' },
+      { label: 'Student Grievance', href: '/student-grievance' },
+      { label: 'Anti Ragging', href: '/anti-ragging' },
+      { label: 'Placements', href: '/placements' },
     ],
   },
   {
@@ -209,7 +209,7 @@ export default function Header() {
           }`}
           style={{ height: '80px', maxHeight: '80px' }}
         >
-          <div className="container-nrec h-full flex items-center justify-between">
+          <div className="container-nrec h-full grid items-center" style={{ gridTemplateColumns: '260px minmax(0,1fr) 260px' }}>
             
             {/* Left Logo block (Width: 260px) */}
             <div className="w-[260px] flex items-center shrink-0">
@@ -230,9 +230,9 @@ export default function Header() {
               </Link>
             </div>
 
-            {/* Center Navigation Menu (No text wrapping, gap reduces if space tight) */}
-            <nav className="hidden lg:flex items-center justify-center flex-1 px-4" aria-label="Main navigation">
-              <div className="flex items-center gap-1 xl:gap-2.5 flex-nowrap">
+            {/* Center Navigation Menu — always centred, never wraps */}
+            <nav className="hidden lg:flex items-center justify-center px-2 overflow-hidden" aria-label="Main navigation">
+              <div className="flex items-center flex-nowrap" style={{ gap: 'clamp(2px, 0.8vw, 10px)' }}>
                 {navItemsState.map((item) => (
                   <div
                     key={item.label}
@@ -243,7 +243,7 @@ export default function Header() {
                     {item.href && !item.children ? (
                       <Link
                         href={item.href}
-                        className={`px-3 py-2 text-[13px] font-extrabold uppercase tracking-wider transition-all duration-200 rounded-lg whitespace-nowrap ${
+                        className={`px-2.5 py-2 text-[12px] font-extrabold uppercase tracking-wide transition-all duration-200 rounded-lg whitespace-nowrap ${
                           isActive(item)
                             ? 'bg-[#8B0E2A] text-white shadow-sm'
                             : (isTransparent ? 'text-white hover:bg-white/10' : 'text-[#374151] hover:bg-gray-50 hover:text-[#8B0E2A]')
@@ -253,7 +253,7 @@ export default function Header() {
                       </Link>
                     ) : (
                       <button
-                        className={`flex items-center gap-1 px-3 py-2 text-[13px] font-extrabold uppercase tracking-wider transition-all duration-200 rounded-lg whitespace-nowrap ${
+                        className={`flex items-center gap-1 px-2.5 py-2 text-[12px] font-extrabold uppercase tracking-wide transition-all duration-200 rounded-lg whitespace-nowrap ${
                           isActive(item)
                             ? 'bg-[#8B0E2A] text-white shadow-sm'
                             : (isTransparent ? 'text-white hover:bg-white/10' : 'text-[#374151] hover:bg-gray-50 hover:text-[#8B0E2A]')
@@ -261,7 +261,7 @@ export default function Header() {
                       >
                         {item.label}
                         <ChevronDown
-                          size={12}
+                          size={11}
                           className={`transition-transform duration-300 ${activeDropdown === item.label ? 'rotate-180' : ''}`}
                         />
                       </button>
@@ -270,50 +270,29 @@ export default function Header() {
                     {/* Mega Dropdown Panel: Full Width (left: 0, right: 0, width: 100%) */}
                     {item.children && activeDropdown === item.label && (
                       <div
-                        className="absolute top-full left-0 right-0 w-full bg-white z-50 border-t border-b border-gray-100 shadow-[0_32px_64px_rgba(0,0,0,0.12)] animate-dropdown"
+                        className="absolute top-full left-0 right-0 w-full bg-white z-50 border-t border-gray-100 shadow-[0_24px_48px_rgba(0,0,0,0.10)] animate-dropdown"
                         onMouseEnter={() => handleDropdownEnter(item.label)}
                         onMouseLeave={handleDropdownLeave}
                       >
                         {/* Gold Border Top */}
-                        <div className="h-[3px] bg-[#B8860B]" />
+                        <div className="h-[3px] bg-gradient-to-r from-[#8B0E2A] to-[#B8860B]" />
                         
-                        <div className="container-nrec py-8">
-                          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                            {/* Slice and map children dynamically into 4 columns */}
-                            {Array.from({ length: 4 }).map((_, colIdx) => {
-                              const itemsPerCol = Math.ceil((item.children?.length || 0) / 4);
-                              const colItems = item.children?.slice(colIdx * itemsPerCol, colIdx * itemsPerCol + itemsPerCol);
-                              
-                              if (!colItems || colItems.length === 0) return null;
-
-                              return (
-                                <div key={colIdx} className="space-y-4">
-                                  <div className="space-y-2">
-                                    {colItems.map((child) => (
-                                      <Link
-                                        key={child.href}
-                                        href={child.href}
-                                        className="flex items-start gap-3 p-3 rounded-2xl hover:bg-[#F8F5F0] transition-all group/item"
-                                      >
-                                        <div className="mt-0.5 w-8 h-8 rounded-xl bg-[#8B0E2A]/5 flex items-center justify-center shrink-0 group-hover/item:bg-[#8B0E2A] transition-all">
-                                          <ArrowRight size={13} className="text-[#8B0E2A] group-hover/item:text-white transition-colors" />
-                                        </div>
-                                        <div className="flex-1">
-                                          <div className="text-[13.5px] font-bold text-[#111111] group-hover/item:text-[#8B0E2A] transition-colors leading-tight">
-                                            {child.label}
-                                          </div>
-                                          {child.desc && (
-                                            <div className="text-[11px] text-gray-500 mt-1 font-light leading-snug">
-                                              {child.desc}
-                                            </div>
-                                          )}
-                                        </div>
-                                      </Link>
-                                    ))}
-                                  </div>
+                        <div className="container-nrec py-5" style={{ maxHeight: '420px', overflowY: 'auto' }}>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-1">
+                            {item.children.map((child) => (
+                              <Link
+                                key={child.href}
+                                href={child.href}
+                                className="flex items-center gap-2.5 px-2 py-2.5 rounded-xl hover:bg-[#F8F5F0] transition-all group/item"
+                              >
+                                <div className="w-6 h-6 rounded-lg bg-[#8B0E2A]/5 flex items-center justify-center shrink-0 group-hover/item:bg-[#8B0E2A] transition-all">
+                                  <ArrowRight size={11} className="text-[#8B0E2A] group-hover/item:text-white transition-colors" />
                                 </div>
-                              );
-                            })}
+                                <span className="text-[12.5px] font-semibold text-[#374151] group-hover/item:text-[#8B0E2A] transition-colors leading-tight whitespace-nowrap">
+                                  {child.label}
+                                </span>
+                              </Link>
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -324,11 +303,11 @@ export default function Header() {
               </div>
             </nav>
 
-            {/* Right: Apply Button */}
-            <div className="hidden lg:flex items-center gap-3">
+            {/* Right: Apply Button — fixed width matches logo column */}
+            <div className="hidden lg:flex items-center justify-end gap-3">
               <Link 
                 href="/admissions" 
-                className={`btn text-[12.5px] font-extrabold uppercase tracking-wider py-2.5 px-6 rounded-full transition-all duration-300 shadow-md ${
+                className={`inline-flex items-center shrink-0 text-[12px] font-extrabold uppercase tracking-wider py-2 px-5 rounded-full transition-all duration-300 shadow-md ${
                   isTransparent 
                     ? 'bg-white text-[#111111] hover:bg-[#F8F5F0]' 
                     : 'bg-[#8B0E2A] text-white hover:bg-[#6D0B20]'

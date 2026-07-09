@@ -22,9 +22,9 @@ export default function HeritageTemplate({ slug, sections }: HeritageTemplatePro
           {/* Left Side: Campus Image inside Heritage Frame */}
           <div className="lg:col-span-5 relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-gray-50 border-4 border-[#B8860B]/20 shadow-md">
             <SafeImage
-              src="/images/campus-life.png"
+              src="/images/generated/heritage_campus.png"
               fallbackKey="department"
-              alt="NREC College Campus"
+              alt="NREC College Heritage Campus"
               fill
               className="object-cover"
             />
