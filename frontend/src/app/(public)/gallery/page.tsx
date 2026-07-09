@@ -90,7 +90,11 @@ export default function GalleryPage() {
               ))}
             </div>
           ) : filteredImages.length === 0 ? (
-            <EmptyState icon={<ImageIcon size={32} className="text-gray-400" />} title="No images found" description="Try selecting a different album or check back later." />
+            <EmptyState 
+              icon={<ImageIcon size={32} className="text-gray-400" />} 
+              title="Campus Visual Archive Update Pending" 
+              description="Visual archives and campus event galleries are currently being updated by the administration. Please check back later." 
+            />
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {filteredImages.map((image, index) => (

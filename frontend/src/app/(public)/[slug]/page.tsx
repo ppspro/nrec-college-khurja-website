@@ -1,8 +1,15 @@
 import { notFound } from 'next/navigation';
 import PageBanner from '@/components/ui/PageBanner';
-import CmsRenderer from '@/components/cms/CmsRenderer';
 import { API_URL } from '@/lib/api';
 import React from 'react';
+import CallToAction from '@/components/sections/CallToAction';
+import HeritageTemplate from '@/components/templates/HeritageTemplate';
+import PeopleTemplate from '@/components/templates/PeopleTemplate';
+import AcademicTemplate from '@/components/templates/AcademicTemplate';
+import CampusTemplate from '@/components/templates/CampusTemplate';
+import StudentTemplate from '@/components/templates/StudentTemplate';
+import DocumentTemplate from '@/components/templates/DocumentTemplate';
+import GenericTemplate from '@/components/templates/GenericTemplate';
 
 async function getPage(slug: string) {
   try {
@@ -13,6 +20,23 @@ async function getPage(slug: string) {
   } catch (err) {
     return null;
   }
+}
+
+function resolveTemplate(slug: string) {
+  const heritageSlugs = ['about', 'history', 'vision-mission', 'recognition-affiliation'];
+  const peopleSlugs = ['principal-message', 'management', 'governing-body', 'college-committee', 'administrative-staff', 'proctorial-board'];
+  const campusSubstrings = ['library', 'sports', 'hostel', 'ncc', 'nss', 'canteen', 'computer-lab', 'facilities'];
+  const studentSubstrings = ['admission-process', 'scholarship', 'placements', 'anti-ragging', 'admission'];
+  const docSubstrings = ['downloads', 'tenders', 'results', 'examination-downloads', 'download', 'examination'];
+
+  if (heritageSlugs.includes(slug)) return HeritageTemplate;
+  if (peopleSlugs.includes(slug)) return PeopleTemplate;
+  if (campusSubstrings.some(s => slug.includes(s))) return CampusTemplate;
+  if (studentSubstrings.some(s => slug.includes(s))) return StudentTemplate;
+  if (docSubstrings.some(s => slug.includes(s))) return DocumentTemplate;
+  if (slug === 'academics' || slug.includes('syllabus') || slug.includes('courses') || slug.includes('departments') || slug.includes('research')) return AcademicTemplate;
+  
+  return GenericTemplate;
 }
 
 export default async function GenericPage({ params }: { params: Promise<{ slug: string }> | { slug: string } }) {
@@ -30,6 +54,8 @@ export default async function GenericPage({ params }: { params: Promise<{ slug: 
     );
   }
 
+  const TemplateComponent = resolveTemplate(slug);
+
   return (
     <>
       <PageBanner
@@ -37,15 +63,19 @@ export default async function GenericPage({ params }: { params: Promise<{ slug: 
         subtitle={page.bannerSubtitle}
         breadcrumbs={[{ label: page.title }]}
       />
-      {!page.sections || page.sections.length === 0 ? (
-        <section className="bg-white py-20 text-center">
-          <div className="container-nrec">
-            <p className="text-gray-500 italic text-lg font-light">Content will be updated soon</p>
-          </div>
-        </section>
-      ) : (
-        <CmsRenderer sections={page.sections} />
-      )}
+      
+      <div className="bg-[#F8F5F0] py-12 sm:py-16">
+        <div className="container-nrec">
+          {/* If Heritage template is used, we render it full-width, else standard layout container handles generic sidebar */}
+          {TemplateComponent === HeritageTemplate ? (
+            <HeritageTemplate slug={slug} sections={page.sections || []} />
+          ) : (
+            <TemplateComponent slug={slug} sections={page.sections || []} />
+          )}
+        </div>
+      </div>
+
+      <CallToAction />
     </>
   );
 }

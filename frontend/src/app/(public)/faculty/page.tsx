@@ -40,11 +40,14 @@ export default function FacultyPage() {
               {Array.from({ length: 8 }).map((_, i) => <div key={i} className="skeleton h-80 rounded-[20px]" />)}
             </div>
           ) : faculty.length === 0 ? (
-            <EmptyState title="No faculty members found" />
+            <EmptyState 
+              title="Faculty Roster Update Pending" 
+              description="The official faculty directory is currently being verified by the college administration. Please check back later." 
+            />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {faculty.map((member, idx) => {
-                const dept = typeof member.department === 'object' && member.department !== null ? member.department.name : 'General';
+                const dept = typeof member.department === 'object' && member.department !== null ? (member.department as any).name : member.department;
                 return (
                   <ScrollReveal key={member._id} direction="up" delay={0.05 * (idx % 4)} className="h-full">
                     <FacultyCard 

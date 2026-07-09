@@ -113,9 +113,10 @@ export default function NoticesPage() {
           ) : notices.length === 0 ? (
             <div className="text-center py-24 bg-white rounded-[20px] border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
               <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Bell size={24} className="text-gray-300" />
+                <Bell size={24} className="text-gray-300 animate-pulse" />
               </div>
-              <p className="text-gray-500 text-lg font-light">No notices found matching your criteria.</p>
+              <h4 className="text-gray-900 font-bold text-lg mb-1">No Active Notices</h4>
+              <p className="text-gray-500 text-sm max-w-sm mx-auto font-light leading-relaxed">Currently, there are no announcements or notifications on the notice board. Please check back later.</p>
             </div>
           ) : (
             <div className="bg-white rounded-[20px] border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden">

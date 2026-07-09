@@ -108,22 +108,14 @@ export default async function ContactPage() {
                       dangerouslySetInnerHTML={{ __html: contact.googleMapEmbed }}
                     />
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 p-8 text-center absolute inset-0">
-                      <div className="w-24 h-24 rounded-full bg-white shadow-sm flex items-center justify-center mb-6 border border-gray-100">
-                        <Map size={40} className="text-gray-300" />
-                      </div>
-                      <h3 className="font-heading font-bold text-[#111111] text-2xl mb-3">NREC College, Khurja</h3>
-                      <p className="text-gray-500 mb-8 max-w-sm leading-relaxed">
-                        Khurja, Bulandshahr District, Uttar Pradesh — 203131
-                      </p>
-                      <a
-                        href="https://maps.google.com/?q=NREC+College+Khurja"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-primary btn-lg rounded-full shadow-md"
-                      >
-                        Open in Google Maps
-                      </a>
+                    <div className="w-full h-full absolute inset-0">
+                      <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3521.8497332306283!2d77.8488052150289!3d27.279611382971212!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39744c8b67119ff3%3A0xe0bbf6ea6ddabfb!2sN.R.E.C.+College%2C+Khurja!5e0!3m2!1sen!2sin!4v1580000000000!5m2!1sen!2sin"
+                        className="w-full h-full border-0 absolute inset-0 rounded-[24px]"
+                        allowFullScreen={false}
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
                     </div>
                   )}
                 </div>
