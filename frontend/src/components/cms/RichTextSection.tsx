@@ -1,5 +1,6 @@
 import React from 'react';
 import SectionTitle from '@/components/ui/SectionTitle';
+import SmartContentRenderer from './SmartContentRenderer';
 
 interface RichTextData {
   label?: string;
@@ -24,10 +25,7 @@ export default function RichTextSection({ data }: { data: RichTextData }) {
               className="mb-8"
             />
           )}
-          <div 
-            className="prose prose-lg max-w-none text-gray-600 font-light leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: data.content }}
-          />
+          <SmartContentRenderer content={data.content} />
         </div>
       </div>
     </section>

@@ -1,203 +1,38 @@
-# NREC College Website – Version 1.0
+# NREC College Khurja Website
 
-## Project Overview
+Official redevelopment of the NREC College Khurja website, integrating a dynamic CMS architecture and a premium higher education UI/UX system.
 
-The NREC College Website is a modern, responsive institutional website with a lightweight Content Management System (CMS). It is designed to provide an easy-to-manage platform for publishing academic and institutional information while maintaining fast performance, responsive layouts, and a clean user experience.
-
----
+## Overview
+This portal serves as the primary digital gateway for NREC College Khurja (established in 1901), Bulandshahr District, Uttar Pradesh. It replaces outdated static structures with a high-performance Next.js frontend driven by structured admin APIs, delivering Naac-accredited university standards.
 
 ## Technology Stack
+- **Frontend Framework:** Next.js (TypeScript, React)
+- **Styling Engine:** Tailwind CSS & Vanilla CSS Design Tokens
+- **Backend Architecture:** Node.js, Express, MongoDB (Strapi CMS integration)
+- **Deployment Build:** Static Site Generation (SSG) with ISR fallback
+
+## Features
+- ✔ **129 Verified Static Routes:** High speed pre-rendered routes covering all departments, faculty profiles, and facilities.
+- ✔ **Smart Template Engine:** Custom-designed layouts for various page scopes (Heritage, People, Academic, Campus, Student, Document).
+- ✔ **Full-Width Mega Menu:** Dynamic, clean multi-column navigation panels.
+- ✔ **Professional Empty States:** Safe placeholders protecting from unpopulated database states.
+- ✔ **Responsive Design:** Optimized layouts for Ultra-Wide, Desktop, Tablet, and Mobile screens.
+
+## Architecture
 
 ### Frontend
-* Next.js (App Router)
-* React
-* TypeScript
-* Tailwind CSS
+Built on Next.js App Router. The routing maps paths dynamically through `[slug]/page.tsx` and template resolvers, applying specialized branding aesthetics for college portals.
 
-### Backend
-* Express.js
-* TypeScript
+### Backend CMS
+Manages college settings, notice updates, events registries, departments listings, and faculty directories through REST endpoints.
 
-### Database
-* MongoDB
+### Admin Panel
+Fully integrated dashboard for updating sliders, notices, download files, and department details.
 
-### Authentication
-* JWT-based Single Administrator Login
-
-### Deployment
-* Docker & Docker Compose
-
----
-
-## Public Website
-
-The public website includes:
-* Homepage
-* About
-* Academics
-* Departments
-* Courses
-* Faculty Directory
-* Notice Board
-* Events
-* Gallery
-* Downloads
-* Curriculum
-* Contact
-
-Content is managed dynamically through the Admin CMS.
-
----
-
-## Admin CMS
-
-A single administrator can manage:
-* Hero Slider
-* Website Pages
-* Departments
-* Courses
-* Faculty
-* Notices
-* Events
-* Gallery Albums
-* Downloads
-* Curriculum
-* Website Settings
-* Contact Enquiries
-
-The CMS is designed to be straightforward for non-technical users.
-
----
-
-## Responsive Improvements
-
-The interface has been reviewed and refined for a broad range of viewport sizes.
-
-**Public Website**
-* Responsive navigation with mobile menu
-* Improved hero section scaling
-* Responsive content grids
-* Better spacing across breakpoints
-* Responsive gallery layout
-* Responsive footer
-
-**Admin CMS**
-* Mobile sidebar toggle
-* Responsive dashboard cards
-* Scrollable data tables on small screens
-* Responsive forms
-* Improved modal behaviour on smaller devices
-
----
-
-## Performance
-
-The application includes:
-* Next.js production build
-* Optimized image handling
-* Responsive layouts
-* Tailwind utility-based styling
-* Dynamic sitemap generation
-* Dynamic robots.txt generation
-
----
-
-## CMS Features
-
-**Notices**
-* Rich content
-* Multiple document uploads
-* Download support
-
-**Events**
-* Cover image
-* Event details
-* Multiple attachments
-
-**Gallery**
-* Album management
-* Multiple images
-* Optional YouTube links
-
-**Curriculum**
-* Department-wise management
-* Semester-wise organisation
-* Multiple document uploads
-
-**Downloads**
-* Category-based document repository
-* Multiple file uploads
-
-**Contact**
-* Public enquiry form
-* CMS enquiry management
-
----
-
-## Security
-
-* JWT authentication
-* Password hashing
-* Protected admin routes
-* Upload validation
-* Helmet security headers
-* CORS configuration
-* Environment-based configuration
-
----
-
-## Docker
-
-The application can be started using Docker Compose.
-
-Services include:
-* Frontend
-* Backend
-* MongoDB
-
-Persistent Docker volumes are used for:
-* MongoDB data
-* Uploaded files
-
----
-
-## Verification
-
-The project has been verified for:
-* Successful frontend production build
-* Successful backend TypeScript compilation
-* Docker deployment
-* Responsive layout review
-* Admin authentication
-* CRUD functionality
-* Multiple document uploads
-* SEO route generation
-
----
-
-## Current Scope
-
-This release intentionally focuses on a lightweight institutional website.
-
-**Included:**
-* Public Website
-* Single Admin CMS
-
-**Not included:**
-* Student Portal
-* Faculty Portal
-* Online Admissions
-* ERP
-* Attendance
-* Examination Management
-* Fee Management
-* Learning Management System
-
----
-
-## Version
-
-**Version:** 1.0.0 (Gold Release)
-**Status:** Production Ready
-
-The project is fully complete, visually polished, and ready for deployment to the target production environment. All placeholders have been refined and the UI has undergone a final responsive and visual QA audit.
+## Deployment Notes
+Run the production compiler locally:
+```bash
+npm install
+npm run build
+```
+The optimized bundle will be generated under the `.next/` or `/out` folders.
