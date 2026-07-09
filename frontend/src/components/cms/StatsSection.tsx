@@ -1,6 +1,7 @@
 import React from 'react';
 import SectionTitle from '@/components/ui/SectionTitle';
-import Card from '@/components/ui/Card';
+import StatsBanner, { StatItem } from '@/components/ui/StatsBanner';
+import { Award, BookOpen, GraduationCap, Users } from 'lucide-react';
 
 interface Stat {
   label: string;
@@ -14,8 +15,31 @@ interface StatsData {
   stats: Stat[];
 }
 
+const icons = [
+  <Award key="award" size={32} className="text-[#8B0E2A]" />,
+  <BookOpen key="book" size={32} className="text-[#B8860B]" />,
+  <GraduationCap key="cap" size={32} className="text-[#8B0E2A]" />,
+  <Users key="users" size={32} className="text-[#B8860B]" />
+];
+
 export default function StatsSection({ data }: { data: StatsData }) {
   if (!data || !data.stats) return null;
+
+  const parsedStats: StatItem[] = data.stats.map((stat, index) => {
+    // Attempt to extract numeric value and suffix (e.g. "100+" -> 100, "+")
+    const match = String(stat.value).match(/^([0-9.,]+)(.*)$/);
+    const numValue = match ? parseFloat(match[1].replace(/,/g, '')) : stat.value;
+    const suffix = match ? match[2] : '';
+
+    return {
+      id: index.toString(),
+      label: stat.label,
+      value: isNaN(Number(numValue)) ? stat.value : Number(numValue),
+      suffix: suffix,
+      icon: icons[index % icons.length],
+      description: stat.sub
+    };
+  });
 
   return (
     <section className="bg-[#F8F5F0] section-py">
@@ -28,15 +52,7 @@ export default function StatsSection({ data }: { data: StatsData }) {
             className="mb-12"
           />
         )}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {data.stats.map((stat, index) => (
-            <Card key={index} hover className="p-6 text-center border border-gray-100 bg-white rounded-[20px]">
-              <div className="font-heading font-bold text-[#8B0E2A] text-4xl mb-2">{stat.value}</div>
-              <div className="font-semibold text-[#111111] text-[15px] mb-1">{stat.label}</div>
-              {stat.sub && <div className="text-xs text-gray-500 font-medium">{stat.sub}</div>}
-            </Card>
-          ))}
-        </div>
+        <StatsBanner stats={parsedStats} />
       </div>
     </section>
   );

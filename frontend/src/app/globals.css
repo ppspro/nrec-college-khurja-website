@@ -141,6 +141,12 @@ body {
     max-width: 65ch; /* Optimal width for readability */
     color: var(--color-text);
   }
+  .prose table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .text-body-xl  { font-size: clamp(1.125rem, 0.4vw + 1rem, 1.25rem);  line-height: 1.8; }

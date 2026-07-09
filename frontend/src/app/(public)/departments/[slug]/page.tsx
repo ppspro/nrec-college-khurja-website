@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { BookOpen, Users, Calendar, ArrowRight } from 'lucide-react';
 import { Faculty, Course } from '@/types';
 import PageBanner from '@/components/ui/PageBanner';
-import { API_URL as API } from '@/lib/api';
-
+import { API_URL as API, uploadsUrl } from '@/lib/api';
+import FacultyCard from '@/components/ui/FacultyCard';
 
 
 export default function DepartmentDetailPage({ params }: { params: Promise<{ slug: string }> | { slug: string } }) {
@@ -135,19 +135,18 @@ export default function DepartmentDetailPage({ params }: { params: Promise<{ slu
               
               {/* Faculty */}
               {deptFaculty.length > 0 && (
-                <div>
-                  <h3 className="font-heading font-bold text-[#111111] text-lg mb-5">Faculty Members</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="mt-12">
+                  <h3 className="font-heading font-bold text-[#111111] text-2xl mb-6">Faculty Members</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {deptFaculty.slice(0, 4).map((f: Faculty) => (
-                      <div key={f._id} className="card p-4 flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-[#8B0E2A] font-bold shrink-0">
-                          {f.name.charAt(0)}
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-sm">{f.name}</h4>
-                          <p className="text-xs text-[#666666]">{f.designation}</p>
-                        </div>
-                      </div>
+                      <FacultyCard 
+                        key={f._id}
+                        name={f.name}
+                        designation={f.designation}
+                        email={f.email}
+                        phone={f.phone}
+                        image={f.photo ? uploadsUrl(f.photo) : undefined}
+                      />
                     ))}
                   </div>
                   {deptFaculty.length > 4 && (
