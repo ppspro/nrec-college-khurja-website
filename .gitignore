@@ -24,3 +24,9 @@ node_modules/
 *.sln
 *.sw?
 *.tsbuildinfo
+
+# Large build archives
+frontend/out.rar
+frontend/out/
+*.rar
+*.zip
