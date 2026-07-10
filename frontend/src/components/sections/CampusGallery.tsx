@@ -24,17 +24,40 @@ const fallbackImages = [
 ];
 
 export default function CampusGallery({ images, albums }: CampusGalleryProps) {
-  // Take up to 6 featured images
-  let allImages = (images || []).slice(0, 6).map(img => ({
-    url: img.image,
-    caption: img.title || img.description || 'Campus Life',
-    id: img._id,
-    fallback: undefined,
-    color: undefined
-  }));
+  // Sort latest first (if order is provided, sort by order, otherwise use array order)
+  const sortedImages = [...(images || [])].sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  if (!allImages || allImages.length === 0) {
-    allImages = fallbackImages as any;
+  // Take up to 6 featured active images
+  const allImages = sortedImages
+    .filter((img: any) => img.isActive !== false)
+    .slice(0, 6)
+    .map(img => ({
+      url: uploadsUrl(img.image),
+      caption: img.title || img.description || 'Campus Life',
+      id: img._id,
+      fallback: undefined,
+      color: undefined
+    }));
+
+  if (allImages.length === 0) {
+    return (
+      <section className="bg-white section-py relative overflow-hidden">
+        <div className="absolute inset-0 bg-[#F9F9F9] pointer-events-none" />
+        <div className="container-nrec relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
+            <SectionTitle
+              label="CAMPUS LIFE"
+              title="Photo Gallery"
+              dark={false}
+              className="mb-0"
+            />
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center max-w-xl mx-auto">
+            <p className="text-gray-500 font-medium">Campus gallery will be updated soon</p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
