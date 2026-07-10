@@ -19,18 +19,7 @@ export default function HeritageTemplate({ slug, sections }: HeritageTemplatePro
         
         {/* Heritage Story Header */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          {/* Left Side: Campus Image inside Heritage Frame */}
-          <div className="lg:col-span-5 relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-gray-50 border-4 border-[#B8860B]/20 shadow-md">
-            <SafeImage
-              src="/images/generated/heritage_campus.png"
-              fallbackKey="department"
-              alt="NREC College Heritage Campus"
-              fill
-              className="object-cover"
-            />
-          </div>
-
-          {/* Right Side: Identity & Heritage Intro */}
+          {/* Left Side: Identity & Heritage Intro */}
           <div className="lg:col-span-7 space-y-5 relative">
             {/* Vertical Accent text */}
             <div className="absolute right-0 top-0 opacity-[0.03] select-none pointer-events-none hidden md:block">
@@ -53,6 +42,17 @@ export default function HeritageTemplate({ slug, sections }: HeritageTemplatePro
                 Initially founded as a pathfinder school, we have grown into a multi-faculty degree college with national accreditation.
               </p>
             </div>
+          </div>
+
+          {/* Right Side: Campus Image inside Heritage Frame */}
+          <div className="lg:col-span-5 relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-gray-50 border-4 border-[#B8860B]/20 shadow-md">
+            <SafeImage
+              src="/images/nrec/campus.jpg"
+              fallbackKey="department"
+              alt="NREC College Heritage Campus"
+              fill
+              className="object-cover"
+            />
           </div>
         </div>
 

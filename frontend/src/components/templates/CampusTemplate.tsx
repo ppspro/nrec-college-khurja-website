@@ -20,7 +20,7 @@ const slugConfig: Record<string, {
   features: { icon: React.ReactNode; title: string; desc: string }[];
 }> = {
   library: {
-    image: '/images/generated/library.png',
+    image: '/images/nrec/library.jpg',
     title: 'Central Library',
     subtitle: 'Knowledge Hub | NREC College Khurja',
     badge: 'Library & Information Centre',
@@ -37,7 +37,7 @@ const slugConfig: Record<string, {
     ],
   },
   sports: {
-    image: '/images/generated/sports.png',
+    image: '/images/nrec/sports.jpg',
     title: 'Sports & Athletics',
     subtitle: 'Physical Excellence | NREC College Khurja',
     badge: 'Sports & Physical Education',
@@ -56,7 +56,7 @@ const slugConfig: Record<string, {
 };
 
 const defaultConfig = {
-  image: '/images/generated/heritage_campus.png',
+  image: '/images/nrec/campus.jpg',
   title: 'Campus Facilities',
   subtitle: 'Infrastructure Excellence | NREC College',
   badge: 'NREC Infrastructure',

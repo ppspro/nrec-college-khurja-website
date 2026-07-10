@@ -18,7 +18,7 @@ export default function AcademicTemplate({ slug, sections }: AcademicTemplatePro
       {/* Hero: Classroom Photography */}
       <div className="relative h-[240px] w-full rounded-[28px] overflow-hidden bg-gray-900">
         <SafeImage
-          src="/images/generated/academics.png"
+          src="/images/nrec/students.jpg"
           fallbackKey="department"
           alt="NREC College Academics"
           fill

@@ -66,7 +66,7 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
         {/* Banner image */}
         <div className="relative w-full h-[220px] rounded-[28px] overflow-hidden bg-gray-100">
           <SafeImage
-            src="/images/generated/admin_office.png"
+            src="/images/nrec/administration.jpg"
             fallbackKey="campus"
             alt="Principal Office NREC College"
             fill

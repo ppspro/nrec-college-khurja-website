@@ -21,7 +21,7 @@ export default function StudentTemplate({ slug, sections }: StudentTemplateProps
       {isAdmission && (
         <div className="relative h-[220px] w-full rounded-[28px] overflow-hidden bg-gray-900">
           <SafeImage
-            src="/images/generated/admissions.png"
+            src="/images/nrec/graduation.jpg"
             fallbackKey="campus"
             alt="NREC College Admissions"
             fill

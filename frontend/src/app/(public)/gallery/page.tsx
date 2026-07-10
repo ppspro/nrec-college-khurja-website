@@ -92,7 +92,7 @@ export default function GalleryPage() {
           ) : filteredImages.length === 0 ? (
             <EmptyState 
               icon={<ImageIcon size={32} className="text-gray-400" />} 
-              title="Campus Visual Archive Update Pending" 
+              title="Campus archive updating soon" 
               description="Visual archives and campus event galleries are currently being updated by the administration. Please check back later." 
             />
           ) : (

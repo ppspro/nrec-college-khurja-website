@@ -4,18 +4,18 @@
 
 /** Default images — used when API returns no image or image fails to load */
 export const defaultImages = {
-  hero: '/images/hero-campus.png',
-  campus: '/images/campus-life.png',
+  hero: '/images/nrec/campus.jpg',
+  campus: '/images/nrec/campus.jpg',
   principal: '/images/principal.png',
   faculty: '/images/principal.png',
-  department: '/images/campus-life.png',
-  course: '/images/campus-life.png',
-  gallery: '/images/campus-life.png',
-  news: '/images/campus-life.png',
-  event: '/images/campus-life.png',
-  admission: '/images/hero-campus.png',
+  department: '/images/nrec/students.jpg',
+  course: '/images/nrec/students.jpg',
+  gallery: '/images/nrec/students.jpg',
+  news: '/images/nrec/students.jpg',
+  event: '/images/nrec/students.jpg',
+  admission: '/images/nrec/graduation.jpg',
   avatar: '/images/principal.png',
-  placeholder: '/images/campus-life.png',
+  placeholder: '/images/nrec/campus.jpg',
 } as const;
 
 /** Safe text - returns fallback if value is empty/null/undefined */

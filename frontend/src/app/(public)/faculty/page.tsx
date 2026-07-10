@@ -41,7 +41,7 @@ export default function FacultyPage() {
             </div>
           ) : faculty.length === 0 ? (
             <EmptyState 
-              title="Faculty Roster Update Pending" 
+              title="Faculty information is being updated" 
               description="The official faculty directory is currently being verified by the college administration. Please check back later." 
             />
           ) : (
