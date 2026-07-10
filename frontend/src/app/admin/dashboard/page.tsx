@@ -101,7 +101,7 @@ export default function AdminDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {statCards.map(({ label, value, icon: Icon, href, color, bg }) => (
-          <Link key={label} href={href} className="admin-card group">
+          <Link key={label} href={href} prefetch={false} className="admin-card group">
             <div className="flex items-start justify-between mb-4">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: bg }}>
                 <Icon size={18} style={{ color }} />
@@ -125,7 +125,7 @@ export default function AdminDashboard() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {quickActions.map(({ label, href, icon: Icon }) => (
-              <Link key={label} href={href} className="flex flex-col items-center gap-2.5 p-4 rounded-xl border border-[#E7E7E7] hover:border-[#990A25] hover:bg-[#FAFAFA] transition-all group text-center">
+              <Link key={label} href={href} prefetch={false} className="flex flex-col items-center gap-2.5 p-4 rounded-xl border border-[#E7E7E7] hover:border-[#990A25] hover:bg-[#FAFAFA] transition-all group text-center">
                 <Icon size={20} className="text-[#666666] group-hover:text-[#990A25] transition-colors" />
                 <span className="text-xs font-medium text-[#2E2E2E] group-hover:text-[#990A25] transition-colors">{label}</span>
               </Link>
@@ -145,7 +145,7 @@ export default function AdminDashboard() {
           ) : (
             <div className="space-y-3 flex-1 overflow-y-auto">
               {activities.map((item) => (
-                <Link key={item._id} href={item.link} className="block p-3 rounded-lg border border-[#F0F0F0] hover:border-[#990A25] hover:bg-[#FAFAFA] transition-all">
+                <Link key={item._id} href={item.link} prefetch={false} className="block p-3 rounded-lg border border-[#F0F0F0] hover:border-[#990A25] hover:bg-[#FAFAFA] transition-all">
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <span className="badge text-[10px] uppercase font-bold tracking-wider">
                       {item.type}

@@ -117,7 +117,7 @@ export default function PagesManager() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
-                      <Link href={`/admin/pages/edit?key=${page.key}`}>
+                      <Link href={`/admin/pages/edit?key=${page.key}`} prefetch={false}>
                         <button className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit Page">
                           <Edit size={16} />
                         </button>

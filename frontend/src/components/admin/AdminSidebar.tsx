@@ -103,7 +103,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           {/* Logo */}
           <div className="px-6 py-6 flex justify-between items-center relative">
             <div className="absolute bottom-0 left-6 right-6 h-px bg-white/10" />
-            <Link href="/admin/dashboard" className="flex items-center gap-4" onClick={onClose}>
+            <Link href="/admin/dashboard" prefetch={false} className="flex items-center gap-4" onClick={onClose}>
               <img 
                 src="/images/logo.png" 
                 alt="NREC College Logo" 
@@ -124,7 +124,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               <X size={18} />
             </button>
           </div>
-
+ 
           {/* Nav */}
           <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
             {navGroups.map((group, groupIdx) => (
@@ -142,6 +142,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                       <Link
                         key={href}
                         href={href}
+                        prefetch={false}
                         onClick={onClose}
                         className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13.5px] font-medium transition-all ${
                           active
@@ -159,7 +160,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               </div>
             ))}
           </nav>
-
+ 
           {/* Footer */}
           <div className="border-t border-white/10 p-4">
             {admin && (
@@ -183,6 +184,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             <Link
               href="/"
               target="_blank"
+              prefetch={false}
               className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs text-white/80 hover:text-white transition-colors mt-1"
             >
               <Globe size={13} />

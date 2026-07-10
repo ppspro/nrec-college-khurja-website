@@ -126,7 +126,7 @@ export default function AdminListPage<T extends { _id: string }>({
           >
             <HelpCircle size={16} /> Help
           </a>
-          <Link href={newHref}>
+          <Link href={newHref} prefetch={false}>
             <Button variant="primary" className="text-sm">
               Add New
             </Button>
@@ -181,7 +181,7 @@ export default function AdminListPage<T extends { _id: string }>({
               title={`No ${title} Found`}
               description={search ? "Try clearing your search query" : `Get started by creating a new entry`}
               action={
-                <Link href={newHref}>
+                <Link href={newHref} prefetch={false}>
                   <Button variant="primary">Add First Item</Button>
                 </Link>
               }
@@ -210,6 +210,7 @@ export default function AdminListPage<T extends { _id: string }>({
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Link
                           href={editHref(item)}
+                          prefetch={false}
                           className="w-8 h-8 rounded-lg bg-white border border-black/5 shadow-sm flex items-center justify-center text-[#666666] hover:border-[#C6A04D] hover:text-[#C6A04D] transition-all"
                         >
                           <Edit2 size={14} />
