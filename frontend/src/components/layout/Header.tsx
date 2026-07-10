@@ -3,25 +3,46 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown, Phone, Mail, Bell, ArrowRight, User, LogIn, Search, HelpCircle } from 'lucide-react';
+import { Menu, X, ChevronDown, Phone, Mail, Home, ArrowRight, Building2, Users, FileCheck2, GraduationCap, BookOpen, UserCircle, Globe, Shield, Activity, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
 
 interface NavItem {
   label: string;
   href?: string;
-  children?: { label: string; href: string; desc?: string; icon?: string }[];
+  children?: { label: string; href: string; desc?: string; icon?: React.ElementType }[];
 }
 
-const navItems: NavItem[] = [
+// Fallback rich metadata to enhance CMS items
+const getRichMetadata = (label: string, url: string) => {
+  const l = label.toLowerCase();
+  
+  if (l.includes('about') || l.includes('history') || l.includes('vision')) return { desc: 'Institution overview & legacy', icon: Building2 };
+  if (l.includes('principal') || l.includes('management') || l.includes('govern')) return { desc: 'Leadership & administration', icon: Users };
+  if (l.includes('naac') || l.includes('iqac') || l.includes('quality') || l.includes('recognition')) return { desc: 'Quality assurance & accreditation', icon: FileCheck2 };
+  
+  if (l.includes('course') || l.includes('program') || l.includes('department') || l.includes('academic')) return { desc: 'Academic programs & faculty', icon: GraduationCap };
+  if (l.includes('syllabus') || l.includes('calendar') || l.includes('research') || l.includes('exam')) return { desc: 'Academic resources & schedules', icon: BookOpen };
+  
+  if (l.includes('admission') || l.includes('fee') || l.includes('seat')) return { desc: 'Enrollment & fee details', icon: UserCircle };
+  if (l.includes('scholarship') || l.includes('placement')) return { desc: 'Financial aid & career', icon: Globe };
+  if (l.includes('ncc') || l.includes('nss') || l.includes('anti ragging') || l.includes('feedback')) return { desc: 'Student welfare & discipline', icon: Shield };
+  if (l.includes('sports') || l.includes('library') || l.includes('hostel') || l.includes('canteen') || l.includes('facilit')) return { desc: 'Campus facilities', icon: Activity };
+  
+  if (l.includes('gallery') || l.includes('media') || l.includes('news') || l.includes('event') || l.includes('notice') || l.includes('download') || l.includes('tender')) return { desc: 'Campus life & updates', icon: ImageIcon };
+  
+  return { desc: 'Explore more details', icon: ArrowRight };
+};
+
+const defaultNavItems: NavItem[] = [
   { label: 'Home', href: '/' },
   {
     label: 'About Us',
     children: [
       { label: 'About College', href: '/about', desc: 'Our legacy and profile' },
       { label: 'History', href: '/history', desc: 'Over 120 years since 1901' },
-      { label: 'Vision & Mission', href: '/vision-mission', desc: 'Guiding educational principles' },
-      { label: 'Recognition & Affiliation', href: '/recognition-affiliation', desc: 'CCS University approvals' },
+      { label: 'Vision Mission', href: '/vision-mission', desc: 'Guiding educational principles' },
+      { label: 'Recognition Affiliation', href: '/recognition-affiliation', desc: 'CCS University approvals' },
     ],
   },
   {
@@ -40,36 +61,33 @@ const navItems: NavItem[] = [
   {
     label: 'Academics',
     children: [
-      { label: 'Faculty', href: '/faculty', desc: 'Our teaching members list' },
-      { label: 'Programme Offered', href: '/courses', desc: 'UG, PG & Professional degrees' },
+      { label: 'Academics', href: '/academics', desc: 'Overview of academics' },
       { label: 'Departments', href: '/departments', desc: 'Arts, Science & Commerce' },
+      { label: 'Courses', href: '/courses', desc: 'UG, PG & Professional degrees' },
       { label: 'Syllabus', href: '/syllabus', desc: 'NEP syllabus downloads' },
-      { label: 'Academic Calendar', href: '/academic-calendar', desc: 'Semester milestones schedule' },
       { label: 'Research', href: '/research', desc: 'Scholarly publications' },
       { label: 'Program Outcomes', href: '/program-outcomes', desc: 'Objectives & outcomes' },
+      { label: 'Examination', href: '/examination', desc: 'Exam schedules and rules' },
     ],
   },
   {
     label: 'IQAC',
     children: [
-      { label: 'About IQAC', href: '/iqac', desc: 'Internal Quality Assurance Cell' },
+      { label: 'IQAC', href: '/iqac', desc: 'Internal Quality Assurance Cell' },
       { label: 'Members', href: '/iqac/members', desc: 'Quality team list' },
       { label: 'AQAR', href: '/iqac/aqar', desc: 'NAAC quality reports' },
-      { label: 'Action Taken Reports', href: '/iqac/action-taken-report', desc: 'Continuous improvements ATR' },
-      { label: 'Feedback', href: '/feedback', desc: 'Stakeholder evaluations' },
+      { label: 'Action Taken Report', href: '/iqac/action-taken-report', desc: 'Continuous improvements ATR' },
     ],
   },
   {
     label: 'Infrastructure',
     children: [
       { label: 'Library', href: '/library', desc: 'Resource collection & services' },
+      { label: 'Facilities', href: '/facilities', desc: 'Campus facilities' },
       { label: 'Computer Lab', href: '/facilities/computer-lab', desc: 'Computing lab center' },
       { label: 'Hostel', href: '/facilities/hostel', desc: 'Boys & girls lodging' },
       { label: 'Canteen', href: '/facilities/canteen', desc: 'Cafeteria & meals plans' },
       { label: 'Sports', href: '/sports', desc: 'Gym & matches' },
-      { label: 'NCC', href: '/ncc', desc: 'Army and Air divisions' },
-      { label: 'NSS', href: '/nss', desc: 'Voluntary community service' },
-      { label: 'Rangers & Rovers', href: '/rangers-rovers', desc: 'Scouts unit' },
     ],
   },
   {
@@ -89,34 +107,40 @@ const navItems: NavItem[] = [
   {
     label: 'Media',
     children: [
+      { label: 'Gallery', href: '/gallery', desc: 'Visual captures' },
       { label: 'News', href: '/news', desc: 'Press releases' },
       { label: 'Events', href: '/events', desc: 'College calendars' },
-      { label: 'Gallery', href: '/gallery', desc: 'Visual captures' },
       { label: 'Notices', href: '/notices', desc: 'Announcements board' },
       { label: 'Downloads', href: '/downloads', desc: 'Registry forms library' },
       { label: 'Tenders', href: '/tenders', desc: 'Procurement quotes' },
     ],
-  },
-  { label: 'Contact', href: '/contact' },
+  }
 ];
 
+// Add icons to default items
+defaultNavItems.forEach(item => {
+  if (item.children) {
+    item.children.forEach(child => {
+      const meta = getRichMetadata(child.label, child.href || '');
+      child.icon = meta.icon;
+    });
+  }
+});
+
 export default function Header() {
-  const [navItemsState, setNavItemsState] = useState<NavItem[]>(navItems);
+  const [navItemsState, setNavItemsState] = useState<NavItem[]>(defaultNavItems);
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const pathname = usePathname();
-  const isHome = pathname === '/';
-  const isTransparent = isHome && !scrolled;
-  const headerRef = useRef<HTMLElement>(null);
   const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const headerRef = useRef<HTMLHeadElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll, { passive: true });
     
-    // Fetch Dynamic Menu
     api.get('/menus/main')
       .then(res => {
         if (res.data?.menu?.items?.length) {
@@ -124,15 +148,21 @@ export default function Header() {
           const hasRichStructure = items.some((item: any) => item.children && item.children.length > 0);
           
           if (hasRichStructure) {
-            const mappedItems = items.map((item: any) => ({
+            let mappedItems = items.map((item: any) => ({
               label: item.label,
               href: item.url,
-              children: item.children?.length ? item.children.map((child: any) => ({
-                label: child.label,
-                href: child.url,
-                desc: child.target === '_blank' ? 'External Link' : undefined
-              })) : undefined
+              children: item.children?.length ? item.children.map((child: any) => {
+                const meta = getRichMetadata(child.label, child.url);
+                return {
+                  label: child.label,
+                  href: child.url,
+                  desc: child.target === '_blank' ? 'External Link' : meta.desc,
+                  icon: meta.icon
+                };
+              }) : undefined
             }));
+            
+            mappedItems = mappedItems.filter((i: any) => i.label.toLowerCase() !== 'contact');
             setNavItemsState(mappedItems);
           }
         }
@@ -160,6 +190,17 @@ export default function Header() {
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
+  
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveDropdown(null);
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleDropdownEnter = (label: string) => {
     if (dropdownTimer.current) clearTimeout(dropdownTimer.current);
@@ -167,7 +208,7 @@ export default function Header() {
   };
 
   const handleDropdownLeave = () => {
-    dropdownTimer.current = setTimeout(() => setActiveDropdown(null), 180);
+    dropdownTimer.current = setTimeout(() => setActiveDropdown(null), 150);
   };
 
   const isActive = (item: NavItem) => {
@@ -176,164 +217,180 @@ export default function Header() {
     if (item.children) return item.children.some(c => pathname.startsWith(c.href));
     return false;
   };
-
+  
   return (
     <>
-      <div className={`z-50 ${isHome ? 'absolute top-0 left-0 right-0 w-full' : 'relative bg-white'}`}>
+      <div className="z-[999] sticky top-0 bg-white">
         
-        {/* Top Bar (Height: 32px) */}
-        <div className="bg-[#0A0A0A] text-white text-[11px] h-8 flex items-center hidden lg:block border-b border-white/5 relative z-20">
-          <div className="container-nrec flex items-center justify-between h-full">
+        {/* 1. TOP INFORMATION BAR (Height: 32px, Background: #050505) */}
+        <div className="bg-[#050505] text-white text-[12px] h-[32px] flex items-center hidden xl:block relative z-20 font-medium border-b border-white/5">
+          <div className="w-full max-w-[1440px] mx-auto px-6 flex items-center justify-between h-full">
             <div className="flex items-center gap-6">
-              <a href="tel:+915738200001" className="flex items-center gap-1.5 text-gray-300 hover:text-[#B8860B] transition-colors">
-                <Phone size={10} />
-                <span>+91-5738-200001</span>
+              <a href="tel:+915738200001" className="flex items-center gap-1.5 text-white/95 hover:text-[#C99700] transition-colors focus:outline-none rounded">
+                <span>☎ +91-5738-200001</span>
               </a>
-              <a href="mailto:info@nreccollege.ac.in" className="flex items-center gap-1.5 text-gray-300 hover:text-[#B8860B] transition-colors">
-                <Mail size={10} />
-                <span>info@nreccollege.ac.in</span>
+              <a href="mailto:info@nreccollege.ac.in" className="flex items-center gap-1.5 text-white/95 hover:text-[#C99700] transition-colors focus:outline-none rounded">
+                <span>✉ info@nreccollege.ac.in</span>
               </a>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-gray-400 font-light">Affiliated to CCS University, Meerut</span>
-              <span className="w-px h-3 bg-gray-700" />
-              <Link href="/admin/login" className="text-gray-300 hover:text-[#B8860B] transition-colors font-medium">
+              <span className="text-white/80">NAAC Accredited</span>
+              <span className="text-white/30">|</span>
+              <span className="text-white/80">Affiliated to CCS University, Meerut</span>
+              <span className="text-white/30">|</span>
+              <Link href="/admin/login" className="text-white/95 hover:text-[#C99700] transition-colors font-semibold">
                 Admin Login
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Main Navbar (Maximum Height: 80px) */}
+        {/* 2. MAIN NAVBAR REDESIGN (Height: 88px/72px, Background: #ffffff, Bottom Border: 3px solid #C99700) */}
         <header
           ref={headerRef}
-          className={`w-full transition-all duration-300 relative z-30 ${
-            scrolled
-              ? 'fixed top-0 left-0 right-0 bg-white shadow-md border-b border-black/[0.04]'
-              : (isHome ? 'bg-transparent' : 'bg-white border-b border-gray-100')
-          }`}
-          style={{ height: '80px', maxHeight: '80px' }}
+          className="w-full bg-white shadow-[0_4px_20px_rgba(0,0,0,0.08)] border-b-[3px] border-[#C99700] relative z-30 transition-all duration-200"
+          style={{ height: scrolled ? '72px' : '88px', maxHeight: scrolled ? '72px' : '88px' }}
         >
-          <div className="container-nrec h-full grid items-center" style={{ gridTemplateColumns: '260px minmax(0,1fr) 260px' }}>
+          <div 
+            className="w-full max-w-[1440px] mx-auto px-6 h-full grid items-center grid-cols-[280px_1fr_260px]"
+          >
             
-            {/* Left Logo block (Width: 260px) */}
-            <div className="w-[260px] flex items-center shrink-0">
-              <Link href="/" className="flex items-center gap-3">
+            {/* Left: Logo block */}
+            <div className="flex items-center shrink-0">
+              <Link href="/" className="flex items-center gap-3 focus:outline-none rounded-lg">
                 <img 
                   src="/images/logo.png" 
                   alt="NREC Logo" 
-                  style={{ height: '48px', width: 'auto', objectFit: 'contain' }}
+                  className="transition-all duration-200"
+                  style={{ height: scrolled ? '55px' : '70px', width: 'auto', objectFit: 'contain' }}
                 />
                 <div className="flex flex-col justify-center">
-                  <span className={`text-[16px] font-black tracking-tight leading-none ${isTransparent ? 'text-white' : 'text-[#111111]'}`}>
+                  <span className="text-[17px] font-bold tracking-tight leading-none text-[#111827]">
                     NREC College
                   </span>
-                  <span className={`text-[9px] font-bold tracking-[0.15em] uppercase mt-1 ${isTransparent ? 'text-white/80' : 'text-[#8B0E2A]'}`}>
-                    Est. 1901 | Khurja
+                  <span className="text-[10px] font-bold tracking-[0.12em] uppercase mt-1 text-[#8B0E2A]">
+                    EST. 1901 | KHURJA
                   </span>
                 </div>
               </Link>
             </div>
 
-            {/* Center Navigation Menu — always centred, never wraps */}
-            <nav className="hidden lg:flex items-center justify-center px-2 overflow-hidden" aria-label="Main navigation">
-              <div className="flex items-center flex-nowrap" style={{ gap: 'clamp(2px, 0.8vw, 10px)' }}>
-                {navItemsState.map((item) => (
-                  <div
-                    key={item.label}
-                    className="static" // Static so absolute mega dropdown covers full header width
-                    onMouseEnter={() => item.children && handleDropdownEnter(item.label)}
-                    onMouseLeave={handleDropdownLeave}
-                  >
-                    {item.href && !item.children ? (
-                      <Link
-                        href={item.href}
-                        className={`px-2.5 py-2 text-[12px] font-extrabold uppercase tracking-wide transition-all duration-200 rounded-lg whitespace-nowrap ${
-                          isActive(item)
-                            ? 'bg-[#8B0E2A] text-white shadow-sm'
-                            : (isTransparent ? 'text-white hover:bg-white/10' : 'text-[#374151] hover:bg-gray-50 hover:text-[#8B0E2A]')
-                        }`}
-                      >
-                        {item.label}
-                      </Link>
-                    ) : (
-                      <button
-                        className={`flex items-center gap-1 px-2.5 py-2 text-[12px] font-extrabold uppercase tracking-wide transition-all duration-200 rounded-lg whitespace-nowrap ${
-                          isActive(item)
-                            ? 'bg-[#8B0E2A] text-white shadow-sm'
-                            : (isTransparent ? 'text-white hover:bg-white/10' : 'text-[#374151] hover:bg-gray-50 hover:text-[#8B0E2A]')
-                        }`}
-                      >
-                        {item.label}
-                        <ChevronDown
-                          size={11}
-                          className={`transition-transform duration-300 ${activeDropdown === item.label ? 'rotate-180' : ''}`}
-                        />
-                      </button>
-                    )}
+            {/* Center: Navigation Menu */}
+            <nav className="hidden xl:flex items-center justify-center px-4 overflow-hidden h-full" aria-label="Main navigation">
+              <div className="flex items-center flex-nowrap gap-1.5 h-full">
+                {navItemsState.map((item) => {
+                  const active = isActive(item);
+                  
+                  return (
+                    <div
+                      key={item.label}
+                      className="static h-full flex items-center"
+                      onMouseEnter={() => item.children && handleDropdownEnter(item.label)}
+                      onMouseLeave={handleDropdownLeave}
+                    >
+                      {item.href && !item.children ? (
+                        <Link
+                          href={item.href}
+                          className={`relative px-3.5 py-2.5 text-[14px] font-bold transition-all duration-200 whitespace-nowrap flex items-center gap-1.5 leading-none ${
+                            active
+                              ? 'bg-[#8B0E2A] text-white rounded-xl shadow-sm'
+                              : 'text-[#111827] hover:bg-[#98002E] hover:text-white rounded-xl'
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      ) : (
+                        <button
+                          aria-expanded={activeDropdown === item.label}
+                          className={`relative px-3.5 py-2.5 text-[14px] font-bold transition-all duration-200 whitespace-nowrap flex items-center gap-1 leading-none ${
+                            active || activeDropdown === item.label
+                              ? 'bg-[#8B0E2A] text-white rounded-xl shadow-sm'
+                              : 'text-[#111827] hover:bg-[#98002E] hover:text-white rounded-xl'
+                          }`}
+                        >
+                          {item.label}
+                          <ChevronDown
+                            size={13}
+                            className={`transition-transform duration-300 ${activeDropdown === item.label ? 'rotate-180' : ''}`}
+                          />
+                        </button>
+                      )}
 
-                    {/* Mega Dropdown Panel: Full Width (left: 0, right: 0, width: 100%) */}
-                    {item.children && activeDropdown === item.label && (
-                      <div
-                        className="absolute top-full left-0 right-0 w-full bg-white z-50 border-t border-gray-100 shadow-[0_24px_48px_rgba(0,0,0,0.10)] animate-dropdown"
-                        onMouseEnter={() => handleDropdownEnter(item.label)}
-                        onMouseLeave={handleDropdownLeave}
-                      >
-                        {/* Gold Border Top */}
-                        <div className="h-[3px] bg-gradient-to-r from-[#8B0E2A] to-[#B8860B]" />
-                        
-                        <div className="container-nrec py-5" style={{ maxHeight: '420px', overflowY: 'auto' }}>
-                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-1">
-                            {item.children.map((child) => (
-                              <Link
-                                key={child.href}
-                                href={child.href}
-                                className="flex items-center gap-2.5 px-2 py-2.5 rounded-xl hover:bg-[#F8F5F0] transition-all group/item"
-                              >
-                                <div className="w-6 h-6 rounded-lg bg-[#8B0E2A]/5 flex items-center justify-center shrink-0 group-hover/item:bg-[#8B0E2A] transition-all">
-                                  <ArrowRight size={11} className="text-[#8B0E2A] group-hover/item:text-white transition-colors" />
-                                </div>
-                                <span className="text-[12.5px] font-semibold text-[#374151] group-hover/item:text-[#8B0E2A] transition-colors leading-tight whitespace-nowrap">
-                                  {child.label}
-                                </span>
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                      {/* 3. MEGA MENU FIX (White, 4 columns, gold border, max-height 70vh, internal scroll) */}
+                      <AnimatePresence>
+                        {item.children && activeDropdown === item.label && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute top-full left-0 w-full bg-white z-50 border-t-[4px] border-[#C99700] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)]"
+                            onMouseEnter={() => handleDropdownEnter(item.label)}
+                            onMouseLeave={handleDropdownLeave}
+                          >
+                            <div className="w-full max-w-[1440px] mx-auto px-6 py-8 overflow-y-auto" style={{ maxHeight: '70vh' }}>
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {item.children.map((child: any) => {
+                                  const Icon = child.icon || ArrowRight;
+                                  return (
+                                    <Link
+                                      key={child.href}
+                                      href={child.href}
+                                      className="flex items-start gap-3 p-3.5 rounded-xl hover:bg-[#F8F5F0] transition-all group/item border border-transparent hover:border-[#C99700]/20"
+                                    >
+                                      <div className="w-9 h-9 rounded-lg bg-[#8B0E2A]/5 flex items-center justify-center shrink-0 group-hover/item:bg-[#8B0E2A] transition-all mt-0.5">
+                                        <Icon size={16} className="text-[#8B0E2A] group-hover/item:text-white transition-colors" />
+                                      </div>
+                                      <div>
+                                        <div className="text-[13.5px] font-bold text-[#111827] group-hover/item:text-[#8B0E2A] transition-colors leading-snug mb-0.5">
+                                          {child.label}
+                                        </div>
+                                        {child.desc && (
+                                          <div className="text-[11.5px] text-[#6B7280] leading-normal font-light">
+                                            {child.desc}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
             </nav>
 
-            {/* Right: Apply Button — fixed width matches logo column */}
-            <div className="hidden lg:flex items-center justify-end gap-3">
+            {/* Right: Actions */}
+            <div className="hidden xl:flex items-center justify-end gap-3 h-full">
+              <Link 
+                href="/contact" 
+                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[48px] px-5 rounded-full transition-all duration-300 border-2 border-[#8B0E2A] bg-white text-[#8B0E2A] hover:bg-[#8B0E2A] hover:text-white"
+              >
+                Contact
+              </Link>
               <Link 
                 href="/admissions" 
-                className={`inline-flex items-center shrink-0 text-[12px] font-extrabold uppercase tracking-wider py-2 px-5 rounded-full transition-all duration-300 shadow-md ${
-                  isTransparent 
-                    ? 'bg-white text-[#111111] hover:bg-[#F8F5F0]' 
-                    : 'bg-[#8B0E2A] text-white hover:bg-[#6D0B20]'
-                }`}
+                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[52px] px-6 rounded-full transition-all duration-300 shadow-md bg-[#8B0E2A] text-white hover:bg-[#6D0B20] hover:-translate-y-0.5 transform"
               >
                 Apply Now
               </Link>
             </div>
 
-            {/* Mobile menu button */}
-            <div className="flex lg:hidden items-center gap-2">
+            {/* Mobile menu hamburger (Hidden on xl) */}
+            <div className="flex xl:hidden items-center justify-end gap-2 h-full">
               <button
-                className={`flex items-center justify-center w-10 h-10 rounded-xl transition-colors border ${
-                  isTransparent 
-                    ? 'text-white bg-white/10 border-white/20 hover:bg-white/25' 
-                    : 'text-[#374151] bg-gray-50 border-gray-100 hover:bg-gray-100'
-                }`}
+                className="flex items-center justify-center w-11 h-11 rounded-xl transition-colors border text-[#374151] bg-gray-50 border-gray-100 hover:bg-gray-100"
                 onClick={() => setIsOpen(true)}
                 aria-label="Open mobile menu"
+                aria-expanded={isOpen}
               >
-                <Menu size={20} />
+                <Menu size={24} />
               </button>
             </div>
 
@@ -342,7 +399,7 @@ export default function Header() {
 
       </div>
 
-      {/* Mobile Drawer (Accordion System) */}
+      {/* 5. MOBILE Drawer Collapsible Accordion */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -350,7 +407,7 @@ export default function Header() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm xl:hidden"
               onClick={() => setIsOpen(false)}
             />
 
@@ -359,81 +416,104 @@ export default function Header() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 z-[101] w-full max-w-xs bg-white shadow-2xl flex flex-col lg:hidden border-l border-gray-100"
+              className="fixed top-0 right-0 bottom-0 z-[101] w-full max-w-sm bg-white shadow-2xl flex flex-col xl:hidden"
             >
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              {/* Mobile Drawer Header */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 shrink-0 bg-white">
                 <img 
                   src="/images/logo.png" 
                   alt="NREC Logo" 
-                  style={{ height: '36px', width: 'auto' }}
+                  style={{ height: '40px', width: 'auto' }}
                 />
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-2 rounded-full hover:bg-gray-100 text-[#374151]"
+                  className="p-2.5 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors"
+                  aria-label="Close mobile menu"
                 >
-                  <X size={20} />
+                  <X size={24} />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
-                {navItemsState.map((item) => (
-                  <div key={item.label} className="border-b border-gray-50 last:border-0 pb-1 mb-1">
-                    {item.href && !item.children ? (
-                      <Link
-                        href={item.href}
-                        className={`flex items-center w-full min-h-[44px] px-3 rounded-xl text-[14px] font-semibold transition-colors ${
-                          isActive(item) ? 'text-[#8B0E2A] bg-[rgba(139,14,42,0.05)]' : 'text-[#374151]'
-                        }`}
-                      >
-                        {item.label}
-                      </Link>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => setMobileExpanded(mobileExpanded === item.label ? null : item.label)}
-                          className="flex items-center justify-between w-full min-h-[44px] px-3 rounded-xl text-[14px] font-semibold text-[#374151]"
+              {/* Mobile Drawer Content */}
+              <div className="flex-1 overflow-y-auto px-4 py-4">
+                <div className="space-y-1">
+                  {navItemsState.map((item) => (
+                    <div key={item.label} className="border-b border-gray-100 last:border-0 pb-2 mb-2">
+                      {item.href && !item.children ? (
+                        <Link
+                          href={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className={`flex items-center w-full min-h-[48px] px-4 rounded-xl text-[15px] font-semibold transition-colors ${
+                            isActive(item) ? 'text-[#8B0E2A] bg-[#8B0E2A]/5' : 'text-gray-700 hover:bg-gray-50'
+                          }`}
                         >
                           {item.label}
-                          <ChevronDown
-                            size={16}
-                            className={`transition-transform duration-300 ${mobileExpanded === item.label ? 'rotate-180 text-[#8B0E2A]' : ''}`}
-                          />
-                        </button>
-                        
-                        <AnimatePresence>
-                          {mobileExpanded === item.label && item.children && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              className="overflow-hidden"
-                            >
-                              <div className="ml-4 border-l border-gray-200 pl-3 space-y-1 my-2">
-                                {item.children.map((child) => (
-                                  <Link
-                                    key={child.href}
-                                    href={child.href}
-                                    className="flex items-center h-10 px-3 rounded-lg text-[13px] text-gray-500 hover:text-[#8B0E2A]"
-                                  >
-                                    {child.label}
-                                  </Link>
-                                ))}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </>
-                    )}
-                  </div>
-                ))}
+                        </Link>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => setMobileExpanded(mobileExpanded === item.label ? null : item.label)}
+                            className="flex items-center justify-between w-full min-h-[48px] px-4 rounded-xl text-[15px] font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                            aria-expanded={mobileExpanded === item.label}
+                          >
+                            {item.label}
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${mobileExpanded === item.label ? 'bg-[#8B0E2A]/10 text-[#8B0E2A]' : 'bg-transparent text-gray-400'}`}>
+                              <ChevronDown
+                                size={18}
+                                className={`transition-transform duration-300 ${mobileExpanded === item.label ? 'rotate-180' : ''}`}
+                              />
+                            </div>
+                          </button>
+                          
+                          <AnimatePresence>
+                            {mobileExpanded === item.label && item.children && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden"
+                              >
+                                <div className="mx-4 mt-1 mb-3 bg-gray-50 rounded-xl p-2 space-y-1">
+                                  {item.children.map((child: any) => {
+                                    const Icon = child.icon || ArrowRight;
+                                    return (
+                                      <Link
+                                        key={child.href}
+                                        href={child.href}
+                                        onClick={() => setIsOpen(false)}
+                                        className="flex items-center gap-3 min-h-[44px] px-3 rounded-lg text-[13.5px] font-medium text-gray-600 hover:text-[#8B0E2A] hover:bg-white transition-colors"
+                                      >
+                                        <Icon size={15} className="text-gray-400" />
+                                        {child.label}
+                                      </Link>
+                                    );
+                                  })}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="p-4 bg-gray-50 border-t border-gray-200 grid grid-cols-2 gap-2">
-                <Link href="/contact" className="btn btn-white w-full justify-center rounded-xl py-2 text-xs border">
+              {/* Mobile Drawer Footer */}
+              <div className="p-6 bg-gray-50 border-t border-gray-200 shrink-0 space-y-3">
+                <Link 
+                  href="/contact" 
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center w-full min-h-[48px] rounded-xl text-[14px] font-bold uppercase tracking-wide border-2 border-[#8B0E2A] text-[#8B0E2A] hover:bg-[#8B0E2A] hover:text-white transition-colors"
+                >
                   Contact
                 </Link>
-                <Link href="/admissions" className="btn btn-primary w-full justify-center rounded-xl py-2 text-xs">
-                  Apply
+                <Link 
+                  href="/admissions" 
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center w-full min-h-[48px] rounded-xl text-[14px] font-bold uppercase tracking-wide bg-[#8B0E2A] text-white hover:bg-[#6D0B20] transition-colors shadow-md"
+                >
+                  Apply Now
                 </Link>
               </div>
 
