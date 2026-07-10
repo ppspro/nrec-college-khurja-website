@@ -291,10 +291,10 @@ export default function Header() {
                       {item.href && !item.children ? (
                         <Link
                           href={item.href}
-                          className={`relative px-3.5 py-2.5 text-[14px] font-bold transition-all duration-200 whitespace-nowrap flex items-center gap-1.5 leading-none ${
+                          className={`h-11 px-[18px] flex items-center justify-center gap-[6px] rounded-xl transition-all duration-200 text-[14px] font-bold whitespace-nowrap leading-none ${
                             active
-                              ? 'bg-[#8B0E2A] text-white rounded-xl shadow-sm'
-                              : 'text-[#111827] hover:bg-[#98002E] hover:text-white rounded-xl'
+                              ? 'bg-[#9b0035] text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]'
+                              : 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]'
                           }`}
                         >
                           {item.label}
@@ -302,10 +302,10 @@ export default function Header() {
                       ) : (
                         <button
                           aria-expanded={activeDropdown === item.label}
-                          className={`relative px-3.5 py-2.5 text-[14px] font-bold transition-all duration-200 whitespace-nowrap flex items-center gap-1 leading-none ${
+                          className={`h-11 px-[18px] flex items-center justify-center gap-[6px] rounded-xl transition-all duration-200 text-[14px] font-bold whitespace-nowrap leading-none ${
                             active || activeDropdown === item.label
-                              ? 'bg-[#8B0E2A] text-white rounded-xl shadow-sm'
-                              : 'text-[#111827] hover:bg-[#98002E] hover:text-white rounded-xl'
+                              ? 'bg-[#9b0035] text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]'
+                              : 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]'
                           }`}
                         >
                           {item.label}
@@ -316,7 +316,7 @@ export default function Header() {
                         </button>
                       )}
 
-                      {/* 3. MEGA MENU FIX (White, 4 columns, gold border, max-height 70vh, internal scroll) */}
+                      {/* 3. MEGA MENU FIX */}
                       <AnimatePresence>
                         {item.children && activeDropdown === item.label && (
                           <motion.div
@@ -328,18 +328,18 @@ export default function Header() {
                             onMouseEnter={() => handleDropdownEnter(item.label)}
                             onMouseLeave={handleDropdownLeave}
                           >
-                            <div className="w-full max-w-[1440px] mx-auto px-6 py-8 overflow-y-auto" style={{ maxHeight: '70vh' }}>
-                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="w-full max-w-[1440px] mx-auto py-8 px-12 overflow-y-auto" style={{ maxHeight: '70vh' }}>
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-10">
                                 {item.children.map((child: any) => {
                                   const Icon = child.icon || ArrowRight;
                                   return (
                                     <Link
                                       key={child.href}
                                       href={child.href}
-                                      className="flex items-start gap-3 p-3.5 rounded-xl hover:bg-[#F8F5F0] transition-all group/item border border-transparent hover:border-[#C99700]/20"
+                                      className="flex items-start gap-3 p-4 h-auto rounded-xl hover:bg-[#F8F5F0] transition-all group/item border border-transparent hover:border-[#C99700]/20"
                                     >
-                                      <div className="w-9 h-9 rounded-lg bg-[#8B0E2A]/5 flex items-center justify-center shrink-0 group-hover/item:bg-[#8B0E2A] transition-all mt-0.5">
-                                        <Icon size={16} className="text-[#8B0E2A] group-hover/item:text-white transition-colors" />
+                                      <div className="w-11 h-11 rounded-lg bg-[#8B0E2A]/5 flex items-center justify-center shrink-0 group-hover/item:bg-[#8B0E2A] transition-all mt-0.5">
+                                        <Icon size={18} className="text-[#8B0E2A] group-hover/item:text-white transition-colors" />
                                       </div>
                                       <div>
                                         <div className="text-[13.5px] font-bold text-[#111827] group-hover/item:text-[#8B0E2A] transition-colors leading-snug mb-0.5">
@@ -370,13 +370,13 @@ export default function Header() {
             <div className="hidden xl:flex items-center justify-end gap-3 h-full">
               <Link 
                 href="/contact" 
-                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[48px] px-5 rounded-full transition-all duration-300 border-2 border-[#8B0E2A] bg-white text-[#8B0E2A] hover:bg-[#8B0E2A] hover:text-white"
+                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[48px] px-7 rounded-full transition-all duration-300 border-2 border-[#8B0E2A] bg-white text-[#8B0E2A] hover:bg-[#8B0E2A] hover:text-white"
               >
                 Contact
               </Link>
               <Link 
                 href="/admissions" 
-                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[52px] px-6 rounded-full transition-all duration-300 shadow-md bg-[#8B0E2A] text-white hover:bg-[#6D0B20] hover:-translate-y-0.5 transform"
+                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[52px] px-8 rounded-full transition-all duration-300 shadow-md bg-[#8B0E2A] text-white hover:bg-[#6D0B20] hover:-translate-y-0.5 transform"
               >
                 Apply Now
               </Link>
