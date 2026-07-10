@@ -252,23 +252,24 @@ export default function Header() {
           style={{ height: scrolled ? '72px' : '88px', maxHeight: scrolled ? '72px' : '88px' }}
         >
           <div 
-            className="w-full max-w-[1440px] mx-auto px-6 h-full grid items-center grid-cols-[280px_1fr_260px]"
+            className="w-full max-w-[1440px] mx-auto px-6 h-full grid items-center grid-cols-[1fr_auto] xl:grid-cols-[240px_minmax(0,1fr)_220px] 2xl:grid-cols-[280px_minmax(0,1fr)_260px]"
           >
             
             {/* Left: Logo block */}
             <div className="flex items-center shrink-0">
-              <Link href="/" className="flex items-center gap-3 focus:outline-none rounded-lg">
+              <Link href="/" className="flex items-center gap-2 xl:gap-3 focus:outline-none rounded-lg">
                 <img 
                   src="/images/logo.png" 
                   alt="NREC Logo" 
-                  className="transition-all duration-200"
-                  style={{ height: scrolled ? '55px' : '70px', width: 'auto', objectFit: 'contain' }}
+                  className={`transition-all duration-200 w-auto object-contain ${
+                    scrolled ? 'h-10 xl:h-[50px] 2xl:h-[55px]' : 'h-12 xl:h-[64px] 2xl:h-[72px]'
+                  }`}
                 />
                 <div className="flex flex-col justify-center">
-                  <span className="text-[17px] font-bold tracking-tight leading-none text-[#111827]">
+                  <span className="text-[15px] xl:text-[18px] 2xl:text-[20px] font-bold tracking-tight leading-none text-[#111827] whitespace-nowrap">
                     NREC College
                   </span>
-                  <span className="text-[10px] font-bold tracking-[0.12em] uppercase mt-1 text-[#8B0E2A]">
+                  <span className="text-[9px] xl:text-[11px] font-bold tracking-[0.12em] uppercase mt-1 text-[#8B0E2A] whitespace-nowrap">
                     EST. 1901 | KHURJA
                   </span>
                 </div>
@@ -277,7 +278,7 @@ export default function Header() {
 
             {/* Center: Navigation Menu */}
             <nav className="hidden xl:flex items-center justify-center px-4 overflow-hidden h-full" aria-label="Main navigation">
-              <div className="flex items-center flex-nowrap gap-1.5 h-full">
+              <div className="flex items-center flex-nowrap gap-3 2xl:gap-5 h-full">
                 {navItemsState.map((item) => {
                   const active = isActive(item);
                   
@@ -291,7 +292,7 @@ export default function Header() {
                       {item.href && !item.children ? (
                         <Link
                           href={item.href}
-                          className={`h-11 px-[18px] flex items-center justify-center gap-[6px] rounded-xl transition-all duration-200 text-[14px] font-bold whitespace-nowrap leading-none ${
+                          className={`h-[42px] px-3 2xl:px-5 flex items-center justify-center gap-[6px] rounded-xl transition-all duration-200 text-[13px] 2xl:text-[14px] font-bold whitespace-nowrap leading-none ${
                             active
                               ? 'bg-[#9b0035] text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]'
                               : 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]'
@@ -302,7 +303,7 @@ export default function Header() {
                       ) : (
                         <button
                           aria-expanded={activeDropdown === item.label}
-                          className={`h-11 px-[18px] flex items-center justify-center gap-[6px] rounded-xl transition-all duration-200 text-[14px] font-bold whitespace-nowrap leading-none ${
+                          className={`h-[42px] px-3 2xl:px-5 flex items-center justify-center gap-[6px] rounded-xl transition-all duration-200 text-[13px] 2xl:text-[14px] font-bold whitespace-nowrap leading-none ${
                             active || activeDropdown === item.label
                               ? 'bg-[#9b0035] text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]'
                               : 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]'
@@ -370,13 +371,13 @@ export default function Header() {
             <div className="hidden xl:flex items-center justify-end gap-3 h-full">
               <Link 
                 href="/contact" 
-                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[48px] px-7 rounded-full transition-all duration-300 border-2 border-[#8B0E2A] bg-white text-[#8B0E2A] hover:bg-[#8B0E2A] hover:text-white"
+                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[44px] px-[22px] 2xl:h-[48px] 2xl:px-[28px] rounded-full transition-all duration-300 border-2 border-[#8B0E2A] bg-white text-[#8B0E2A] hover:bg-[#8B0E2A] hover:text-white"
               >
                 Contact
               </Link>
               <Link 
                 href="/admissions" 
-                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[52px] px-8 rounded-full transition-all duration-300 shadow-md bg-[#8B0E2A] text-white hover:bg-[#6D0B20] hover:-translate-y-0.5 transform"
+                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[48px] px-6 2xl:h-[52px] 2xl:px-8 rounded-full transition-all duration-300 shadow-md bg-[#8B0E2A] text-white hover:bg-[#6D0B20] hover:-translate-y-0.5 transform"
               >
                 Apply Now
               </Link>
