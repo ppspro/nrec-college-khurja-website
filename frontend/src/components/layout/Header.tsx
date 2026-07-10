@@ -120,16 +120,21 @@ export default function Header() {
     api.get('/menus/main')
       .then(res => {
         if (res.data?.menu?.items?.length) {
-          const mappedItems = res.data.menu.items.map((item: any) => ({
-            label: item.label,
-            href: item.url,
-            children: item.children?.length ? item.children.map((child: any) => ({
-              label: child.label,
-              href: child.url,
-              desc: child.target === '_blank' ? 'External Link' : undefined
-            })) : undefined
-          }));
-          setNavItemsState(mappedItems);
+          const items = res.data.menu.items;
+          const hasRichStructure = items.some((item: any) => item.children && item.children.length > 0);
+          
+          if (hasRichStructure) {
+            const mappedItems = items.map((item: any) => ({
+              label: item.label,
+              href: item.url,
+              children: item.children?.length ? item.children.map((child: any) => ({
+                label: child.label,
+                href: child.url,
+                desc: child.target === '_blank' ? 'External Link' : undefined
+              })) : undefined
+            }));
+            setNavItemsState(mappedItems);
+          }
         }
       })
       .catch(err => console.error('Failed to load menu', err));
