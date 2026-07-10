@@ -248,22 +248,22 @@ export default function Header() {
         {/* 2. MAIN NAVBAR REDESIGN (Height: 90px, Background: #ffffff) */}
         <div className="w-full bg-white relative z-30">
           <div 
-            className="w-full max-w-[1440px] mx-auto px-6 h-[90px] grid items-center grid-cols-[1fr_auto] xl:grid-cols-[260px_1fr_260px]"
+            className="w-full max-w-[1600px] mx-auto px-6 h-[90px] grid items-center grid-cols-[1fr_auto] xl:grid-cols-[240px_minmax(0,1fr)_220px] 2xl:grid-cols-[280px_minmax(0,1fr)_250px]"
           >
             
             {/* Left: Logo block */}
-            <div className="flex items-center gap-3 w-[260px] overflow-hidden shrink-0">
+            <div className="flex items-center gap-3 xl:w-[240px] 2xl:w-[280px] overflow-hidden shrink-0">
               <Link href="/" className="flex items-center gap-3 focus:outline-none rounded-lg">
                 <img 
                   src="/images/logo.png" 
                   alt="NREC Logo" 
-                  className="h-[55px] w-[55px] xl:h-[70px] xl:w-[70px] object-contain shrink-0"
+                  className="h-[55px] w-[55px] xl:h-[64px] xl:w-[64px] object-contain shrink-0"
                 />
                 <div className="flex flex-col justify-center">
-                  <span className="text-xl font-bold tracking-tight leading-none text-[#111827] whitespace-nowrap">
+                  <span className="text-lg xl:text-[18px] 2xl:text-xl font-bold tracking-tight leading-none text-[#111827] whitespace-nowrap">
                     NREC College
                   </span>
-                  <span className="text-xs tracking-wide uppercase mt-1 text-[#8B0E2A] whitespace-nowrap">
+                  <span className="text-[10px] xl:text-[11px] 2xl:text-xs tracking-wide uppercase mt-1 text-[#8B0E2A] whitespace-nowrap">
                     EST. 1901 | KHURJA
                   </span>
                 </div>
@@ -271,22 +271,22 @@ export default function Header() {
             </div>
 
             {/* Center: Navigation Menu */}
-            <nav className="hidden xl:flex justify-center items-center gap-5 h-full" aria-label="Main navigation">
-              <div className="flex items-center flex-nowrap gap-1.5 h-full">
+            <nav className="hidden xl:flex min-w-0 items-center justify-center overflow-visible h-full" aria-label="Main navigation">
+              <div className="flex items-center flex-nowrap gap-2 xl:gap-3 2xl:gap-5 h-full">
                 {navItemsState.map((item) => {
                   const active = isActive(item);
                   
                   return (
                     <div
                       key={item.label}
-                      className="relative inline-flex items-center h-11 px-4 text-[14px] font-bold whitespace-nowrap"
+                      className="relative inline-flex items-center h-11"
                       onMouseEnter={() => item.children && handleDropdownEnter(item.label)}
                       onMouseLeave={handleDropdownLeave}
                     >
                       {item.href && !item.children ? (
                         <Link
                           href={item.href}
-                          className={`h-11 px-4 flex items-center justify-center gap-2 rounded-xl transition-all duration-200 text-[14px] font-bold whitespace-nowrap leading-none ${
+                          className={`inline-flex items-center justify-center h-10 px-2 xl:px-3 2xl:px-4 text-[13px] 2xl:text-sm font-semibold whitespace-nowrap rounded-xl transition-all duration-200 leading-none ${
                             active
                               ? 'bg-[#9b0035] text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]'
                               : 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]'
@@ -297,7 +297,7 @@ export default function Header() {
                       ) : (
                         <button
                           aria-expanded={activeDropdown === item.label}
-                          className={`h-11 px-4 flex items-center justify-center gap-2 rounded-xl transition-all duration-200 text-[14px] font-bold whitespace-nowrap leading-none ${
+                          className={`inline-flex items-center justify-center h-10 px-2 xl:px-3 2xl:px-4 text-[13px] 2xl:text-sm font-semibold whitespace-nowrap rounded-xl transition-all duration-200 leading-none ${
                             active || activeDropdown === item.label
                               ? 'bg-[#9b0035] text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]'
                               : 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]'
@@ -361,18 +361,19 @@ export default function Header() {
             </nav>
 
             {/* Right: Actions */}
-            <div className="hidden xl:flex justify-end items-center gap-4">
+            <div className="hidden xl:flex justify-end items-center gap-3 min-w-0">
               <Link 
                 href="/contact" 
-                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[48px] px-7 rounded-full transition-all duration-300 border-2 border-[#8B0E2A] bg-white text-[#8B0E2A] hover:bg-[#8B0E2A] hover:text-white"
+                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-11 px-5 rounded-full transition-all duration-300 border-2 border-[#8B0E2A] bg-white text-[#8B0E2A] hover:bg-[#8B0E2A] hover:text-white"
               >
                 Contact
               </Link>
               <Link 
                 href="/admissions" 
-                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-[52px] px-8 rounded-full transition-all duration-300 shadow-md bg-[#8B0E2A] text-white hover:bg-[#6D0B20] hover:-translate-y-0.5 transform"
+                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-12 px-6 rounded-full transition-all duration-300 shadow-md bg-[#8B0E2A] text-white hover:bg-[#6D0B20] hover:-translate-y-0.5 transform"
               >
-                Apply Now
+                <span className="xl:inline 2xl:hidden">Apply</span>
+                <span className="hidden 2xl:inline">Apply Now</span>
               </Link>
             </div>
 
