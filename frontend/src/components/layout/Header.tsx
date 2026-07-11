@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown, Phone, Mail, Home, ArrowRight, Building2, Users, FileCheck2, GraduationCap, BookOpen, UserCircle, Globe, Shield, Activity, Image as ImageIcon } from 'lucide-react';
+import { Menu, X, ChevronDown, Phone, Mail, Home, ArrowRight, Building2, Users, FileCheck2, GraduationCap, BookOpen, UserCircle, Globe, Shield, Activity, Image as ImageIcon, Landmark, Target, FlaskConical, Award, Briefcase, Newspaper, Calendar, Download, Megaphone, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
 
@@ -17,19 +17,29 @@ interface NavItem {
 const getRichMetadata = (label: string, url: string) => {
   const l = label.toLowerCase();
   
-  if (l.includes('about') || l.includes('history') || l.includes('vision')) return { desc: 'Institution overview & legacy', icon: Building2 };
+  if (l.includes('history')) return { desc: 'Over 120 years since 1901', icon: Landmark };
+  if (l.includes('vision') || l.includes('mission')) return { desc: 'Guiding educational principles', icon: Target };
+  if (l.includes('about')) return { desc: 'Institution overview & legacy', icon: Building2 };
+  
   if (l.includes('principal') || l.includes('management') || l.includes('govern')) return { desc: 'Leadership & administration', icon: Users };
   if (l.includes('naac') || l.includes('iqac') || l.includes('quality') || l.includes('recognition')) return { desc: 'Quality assurance & accreditation', icon: FileCheck2 };
   
-  if (l.includes('course') || l.includes('program') || l.includes('department') || l.includes('academic')) return { desc: 'Academic programs & faculty', icon: GraduationCap };
-  if (l.includes('syllabus') || l.includes('calendar') || l.includes('research') || l.includes('exam')) return { desc: 'Academic resources & schedules', icon: BookOpen };
+  if (l.includes('department')) return { desc: 'Arts, Science & Commerce', icon: Building2 };
+  if (l.includes('course') || l.includes('program')) return { desc: 'UG, PG & Professional degrees', icon: GraduationCap };
+  if (l.includes('syllabus') || l.includes('calendar') || l.includes('exam')) return { desc: 'Academic resources & schedules', icon: BookOpen };
+  if (l.includes('research') || l.includes('publication')) return { desc: 'Scholarly publications', icon: FlaskConical };
   
   if (l.includes('admission') || l.includes('fee') || l.includes('seat')) return { desc: 'Enrollment & fee details', icon: UserCircle };
-  if (l.includes('scholarship') || l.includes('placement')) return { desc: 'Financial aid & career', icon: Globe };
-  if (l.includes('ncc') || l.includes('nss') || l.includes('anti ragging') || l.includes('feedback')) return { desc: 'Student welfare & discipline', icon: Shield };
-  if (l.includes('sports') || l.includes('library') || l.includes('hostel') || l.includes('canteen') || l.includes('facilit')) return { desc: 'Campus facilities', icon: Activity };
+  if (l.includes('scholarship')) return { desc: 'Financial support programs', icon: Award };
+  if (l.includes('placement')) return { desc: 'Career services & recruiters', icon: Briefcase };
   
-  if (l.includes('gallery') || l.includes('media') || l.includes('news') || l.includes('event') || l.includes('notice') || l.includes('download') || l.includes('tender')) return { desc: 'Campus life & updates', icon: ImageIcon };
+  if (l.includes('gallery')) return { desc: 'Visual campus life archives', icon: ImageIcon };
+  if (l.includes('news')) return { desc: 'Press releases & stories', icon: Newspaper };
+  if (l.includes('event')) return { desc: 'College calendars & matches', icon: Calendar };
+  if (l.includes('notice')) return { desc: 'Announcements board updates', icon: Megaphone };
+  if (l.includes('download')) return { desc: 'Registry forms library', icon: Download };
+  if (l.includes('tender')) return { desc: 'Procurement quotes info', icon: FileText };
+  if (l.includes('faculty')) return { desc: 'Scholars & teachers directories', icon: Users };
   
   return { desc: 'Explore more details', icon: ArrowRight };
 };
