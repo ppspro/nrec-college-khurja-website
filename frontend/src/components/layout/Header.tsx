@@ -253,7 +253,7 @@ export default function Header() {
             
             {/* Left: Logo block */}
             <div className="flex items-center gap-3 xl:w-[240px] 2xl:w-[280px] overflow-hidden shrink-0">
-              <Link href="/" className="flex items-center gap-3 focus:outline-none rounded-lg">
+              <Link href="/" className="flex items-center gap-3 focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none rounded-lg">
                 <img 
                   src="/images/logo.png" 
                   alt="NREC Logo" 
@@ -286,7 +286,7 @@ export default function Header() {
                       {item.href && !item.children ? (
                         <Link
                           href={item.href}
-                          className={`inline-flex items-center justify-center h-10 px-2 xl:px-3 2xl:px-4 text-[13px] 2xl:text-sm font-semibold whitespace-nowrap rounded-xl transition-all duration-200 leading-none ${
+                          className={`inline-flex items-center justify-center h-10 px-2 xl:px-3 2xl:px-4 text-[13px] 2xl:text-sm font-semibold whitespace-nowrap rounded-xl transition-all duration-200 leading-none focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none ${
                             active
                               ? 'bg-[#9b0035] text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]'
                               : 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]'
@@ -297,7 +297,7 @@ export default function Header() {
                       ) : (
                         <button
                           aria-expanded={activeDropdown === item.label}
-                          className={`inline-flex items-center justify-center h-10 px-2 xl:px-3 2xl:px-4 text-[13px] 2xl:text-sm font-semibold whitespace-nowrap rounded-xl transition-all duration-200 leading-none ${
+                          className={`inline-flex items-center justify-center h-10 px-2 xl:px-3 2xl:px-4 text-[13px] 2xl:text-sm font-semibold whitespace-nowrap rounded-xl transition-all duration-200 leading-none focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none ${
                             active || activeDropdown === item.label
                               ? 'bg-[#9b0035] text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]'
                               : 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]'
@@ -331,7 +331,7 @@ export default function Header() {
                                     <Link
                                       key={child.href}
                                       href={child.href}
-                                      className="flex items-start gap-3 p-4 h-auto rounded-xl hover:bg-[#F8F5F0] transition-all group/item border border-transparent hover:border-[#C99700]/20"
+                                      className="flex items-start gap-3 p-4 h-auto rounded-xl hover:bg-[#F8F5F0] transition-all group/item border border-transparent hover:border-[#C99700]/20 focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none"
                                     >
                                       <div className="w-11 h-11 rounded-lg bg-[#8B0E2A]/5 flex items-center justify-center shrink-0 group-hover/item:bg-[#8B0E2A] transition-all mt-0.5">
                                         <Icon size={18} className="text-[#8B0E2A] group-hover/item:text-white transition-colors" />
@@ -364,13 +364,13 @@ export default function Header() {
             <div className="hidden xl:flex justify-end items-center gap-3 min-w-0">
               <Link 
                 href="/contact" 
-                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-11 px-5 rounded-full transition-all duration-300 border-2 border-[#8B0E2A] bg-white text-[#8B0E2A] hover:bg-[#8B0E2A] hover:text-white"
+                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-11 px-5 rounded-full transition-all duration-300 border-2 border-[#8B0E2A] bg-white text-[#8B0E2A] hover:bg-[#8B0E2A] hover:text-white focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none"
               >
                 Contact
               </Link>
               <Link 
                 href="/admissions" 
-                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-12 px-6 rounded-full transition-all duration-300 shadow-md bg-[#8B0E2A] text-white hover:bg-[#6D0B20] hover:-translate-y-0.5 transform"
+                className="inline-flex items-center justify-center shrink-0 text-[13px] font-bold uppercase tracking-wide h-12 px-6 rounded-full transition-all duration-300 shadow-md bg-[#8B0E2A] text-white hover:bg-[#6D0B20] hover:-translate-y-0.5 transform focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none"
               >
                 <span className="xl:inline 2xl:hidden">Apply</span>
                 <span className="hidden 2xl:inline">Apply Now</span>
