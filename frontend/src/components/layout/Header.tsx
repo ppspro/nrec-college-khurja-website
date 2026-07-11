@@ -319,29 +319,36 @@ export default function Header() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
                             transition={{ duration: 0.15 }}
-                            className="absolute top-full left-1/2 -translate-x-1/2 z-70 w-full min-w-[1100px] max-w-[1280px] bg-white border-t-[4px] border-[#C99700] shadow-[0_20px_40px_rgba(0,0,0,0.12)] rounded-b-2xl"
+                            className="absolute top-full left-1/2 -translate-x-1/2 z-70 bg-white border-t-[4px] border-[#C99700] shadow-[0_20px_40px_rgba(0,0,0,0.12)] rounded-b-2xl"
+                            style={{ width: 'min(95vw, 1200px)', maxWidth: '1200px' }}
                             onMouseEnter={() => handleDropdownEnter(item.label)}
                             onMouseLeave={handleDropdownLeave}
                           >
                             <div className="w-full py-6 px-6 overflow-y-auto overflow-x-hidden" style={{ maxHeight: '70vh' }}>
-                              <div className="grid grid-cols-4 gap-6">
+                              <div className={`grid gap-4 ${
+                                item.children.length <= 6 
+                                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' 
+                                  : item.children.length <= 10 
+                                    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' 
+                                    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                              }`}>
                                 {item.children.map((child: any) => {
                                   const Icon = child.icon || ArrowRight;
                                   return (
                                     <Link
                                       key={child.href}
                                       href={child.href}
-                                      className="flex items-start gap-3 p-[18px] h-auto rounded-xl hover:bg-[#F8F5F0] transition-all group/item border border-transparent hover:border-[#C99700]/20 focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none"
+                                      className="flex items-start gap-4 p-5 h-auto rounded-xl border border-transparent hover:bg-[#F8F5F0] hover:border-[#8B0E2A]/40 hover:-translate-y-1 hover:shadow-md transition-all duration-200 group/item focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none"
                                     >
-                                      <div className="w-11 h-11 rounded-lg bg-[#8B0E2A]/5 flex items-center justify-center shrink-0 group-hover/item:bg-[#8B0E2A] transition-all mt-0.5">
-                                        <Icon size={18} className="text-[#8B0E2A] group-hover/item:text-white transition-colors" />
+                                      <div className="w-11 h-11 rounded-lg bg-[#8B0E2A]/5 text-[#8B0E2A] flex items-center justify-center shrink-0 group-hover/item:scale-110 transition-transform duration-200 mt-0.5">
+                                        <Icon size={18} className="text-[#8B0E2A] group-hover/item:text-[#8B0E2A] transition-colors" />
                                       </div>
                                       <div>
-                                        <div className="text-[13.5px] font-bold text-[#111827] group-hover/item:text-[#8B0E2A] transition-colors leading-snug mb-0.5">
+                                        <div className="text-[16px] font-bold text-[#111827] group-hover/item:text-[#8B0E2A] transition-colors leading-snug mb-0.5">
                                           {child.label}
                                         </div>
                                         {child.desc && (
-                                          <div className="text-[11.5px] text-[#6B7280] leading-normal font-light">
+                                          <div className="text-[14px] text-[#6B7280] leading-normal font-light">
                                             {child.desc}
                                           </div>
                                         )}
