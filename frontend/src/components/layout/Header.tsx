@@ -220,11 +220,11 @@ export default function Header() {
   
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white shadow-md w-full border-b-[4px] border-[#C99700]">
+      <header className="sticky top-0 z-60 bg-white shadow-md w-full border-b-[4px] border-[#C99700]">
         
         {/* 1. TOP INFORMATION BAR (Height: 32px, Background: #050505) */}
         <div className="bg-[#050505] text-white text-[12px] h-[32px] flex items-center hidden xl:block relative z-20 font-medium border-b border-white/5">
-          <div className="w-full max-w-[1440px] mx-auto px-6 flex items-center justify-between h-full">
+          <div className="w-full max-w-[1600px] mx-auto px-6 flex items-center justify-between h-full">
             <div className="flex items-center gap-6">
               <a href="tel:+915738200001" className="flex items-center gap-1.5 text-white/95 hover:text-[#C99700] transition-colors focus:outline-none rounded">
                 <span>☎ +91-5738-200001</span>
@@ -279,7 +279,7 @@ export default function Header() {
                   return (
                     <div
                       key={item.label}
-                      className="relative inline-flex items-center h-11"
+                      className="relative inline-flex items-center h-full"
                       onMouseEnter={() => item.children && handleDropdownEnter(item.label)}
                       onMouseLeave={handleDropdownLeave}
                     >
@@ -319,19 +319,19 @@ export default function Header() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
                             transition={{ duration: 0.15 }}
-                            className="absolute top-full left-0 right-0 w-full bg-white z-[999] border-t-[4px] border-[#C99700] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.15)]"
+                            className="absolute top-full left-1/2 -translate-x-1/2 z-70 w-full min-w-[1100px] max-w-[1280px] bg-white border-t-[4px] border-[#C99700] shadow-[0_20px_40px_rgba(0,0,0,0.12)] rounded-b-2xl"
                             onMouseEnter={() => handleDropdownEnter(item.label)}
                             onMouseLeave={handleDropdownLeave}
                           >
-                            <div className="w-full max-w-[1440px] mx-auto py-8 px-12 overflow-y-auto" style={{ maxHeight: '70vh' }}>
-                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-10">
+                            <div className="w-full py-6 px-6 overflow-y-auto overflow-x-hidden" style={{ maxHeight: '70vh' }}>
+                              <div className="grid grid-cols-4 gap-6">
                                 {item.children.map((child: any) => {
                                   const Icon = child.icon || ArrowRight;
                                   return (
                                     <Link
                                       key={child.href}
                                       href={child.href}
-                                      className="flex items-start gap-3 p-4 h-auto rounded-xl hover:bg-[#F8F5F0] transition-all group/item border border-transparent hover:border-[#C99700]/20 focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none"
+                                      className="flex items-start gap-3 p-[18px] h-auto rounded-xl hover:bg-[#F8F5F0] transition-all group/item border border-transparent hover:border-[#C99700]/20 focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none"
                                     >
                                       <div className="w-11 h-11 rounded-lg bg-[#8B0E2A]/5 flex items-center justify-center shrink-0 group-hover/item:bg-[#8B0E2A] transition-all mt-0.5">
                                         <Icon size={18} className="text-[#8B0E2A] group-hover/item:text-white transition-colors" />
