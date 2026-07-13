@@ -86,8 +86,44 @@ export default function AcademicTemplate({ slug, sections }: AcademicTemplatePro
 
       {/* Main CMS Content */}
       {sections.length > 0 && (
-        <div className="bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-          <CmsRenderer sections={sections} />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* Left Column: Archive Content */}
+          <div className="lg:col-span-8 bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)] prose max-w-none text-gray-700 leading-relaxed font-light text-[15px]">
+            <CmsRenderer sections={sections} />
+          </div>
+
+          {/* Right Column: Academic Framework Sidebar */}
+          <div className="lg:col-span-4 space-y-6 sticky top-28">
+            {/* Affiliation Callout */}
+            <div className="bg-[#B8860B]/5 border border-[#B8860B]/20 rounded-2xl p-6 space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#B8860B] block">Affiliation Authority</span>
+              <h4 className="font-heading font-bold text-gray-900 text-sm">CCS University Meerut</h4>
+              <p className="text-xs text-gray-500 font-light leading-relaxed">
+                All syllabus, curricula, examinations, and final degrees are regulated under Chaudhary Charan Singh University guidelines.
+              </p>
+            </div>
+
+            {/* Regulatory Checklist */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-3">
+              <h4 className="font-heading font-bold text-sm text-gray-900 uppercase tracking-wider pb-2 border-b border-gray-50">
+                Curriculum Framework
+              </h4>
+              <ul className="text-xs text-gray-500 font-light space-y-3">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8B0E2A]" />
+                  NEP 2020 Semester Pattern
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]" />
+                  Choice Based Credit System (CBCS)
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8B0E2A]" />
+                  Continuous Internal Evaluation
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       )}
 

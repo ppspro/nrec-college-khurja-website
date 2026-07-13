@@ -9,7 +9,7 @@ import { uploadsUrl, API_URL } from '@/lib/api';
 
 
 
-export default function NoticeDetailPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
+export default function NoticeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const [notice, setNotice] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);

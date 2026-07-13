@@ -39,7 +39,7 @@ function resolveTemplate(slug: string) {
   return GenericTemplate;
 }
 
-export default async function FacilitiesSubPage({ params }: { params: Promise<{ subslug: string }> | { subslug: string } }) {
+export default async function FacilitiesSubPage({ params }: { params: Promise<{ subslug: string }> }) {
   const resolvedParams = await params;
   const subslug = resolvedParams.subslug;
   const page = await getPage(subslug);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown, Phone, Mail, Home, ArrowRight, Building2, Users, FileCheck2, GraduationCap, BookOpen, UserCircle, Globe, Shield, Activity, Image as ImageIcon, Landmark, Target, FlaskConical, Award, Briefcase, Newspaper, Calendar, Download, Megaphone, FileText } from 'lucide-react';
@@ -146,6 +146,49 @@ export default function Header() {
   const pathname = usePathname();
   const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const headerRef = useRef<HTMLHeadElement>(null);
+  const dividerRef = useRef<HTMLDivElement>(null);
+  const [dividerBottom, setDividerBottom] = useState(0);
+  const dropdownNodeRef = useRef<HTMLDivElement | null>(null);
+  const [dropdownHeight, setDropdownHeight] = useState(0);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const activeItem = navItemsState.find(i => i.label === activeDropdown);
+
+  const dropdownRef = useCallback((node: HTMLDivElement | null) => {
+    dropdownNodeRef.current = node;
+    if (node !== null && activeDropdown) {
+      setDropdownHeight(node.getBoundingClientRect().height);
+    }
+  }, [activeDropdown]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', listener);
+    return () => mediaQuery.removeEventListener('change', listener);
+  }, []);
+
+  useEffect(() => {
+    if (!activeDropdown) {
+      setDropdownHeight(0);
+    }
+  }, [activeDropdown]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (activeDropdown && dropdownNodeRef.current) {
+        setDropdownHeight(dropdownNodeRef.current.getBoundingClientRect().height);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [activeDropdown]);
+
+  useEffect(() => {
+    if (dividerRef.current) {
+      setDividerBottom(dividerRef.current.getBoundingClientRect().bottom);
+    }
+  }, [activeDropdown, dropdownHeight]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -179,7 +222,21 @@ export default function Header() {
       })
       .catch(err => console.error('Failed to load menu', err));
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Track divider position for fixed dropdown placement
+    const updateDividerBottom = () => {
+      if (dividerRef.current) {
+        const rect = dividerRef.current.getBoundingClientRect();
+        setDividerBottom(rect.bottom);
+      }
+    };
+    updateDividerBottom();
+    window.addEventListener('resize', updateDividerBottom, { passive: true });
+    window.addEventListener('scroll', updateDividerBottom, { passive: true });
+
+    return () => {
+      window.removeEventListener('resize', updateDividerBottom);
+      window.removeEventListener('scroll', updateDividerBottom);
+    };
   }, []);
 
   useEffect(() => {
@@ -228,9 +285,12 @@ export default function Header() {
     return false;
   };
   
+  const activeClass = 'bg-[#9b0035] !text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]';
+  const inactiveClass = 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]';
+
   return (
     <>
-      <header className="sticky top-0 z-60 bg-white shadow-md w-full border-b-[4px] border-[#C99700]">
+      <header ref={headerRef} className="sticky top-0 z-60 bg-white shadow-md w-full">
         
         {/* 1. TOP INFORMATION BAR (Height: 32px, Background: #050505) */}
         <div className="bg-[#050505] text-white text-[12px] h-[32px] flex items-center hidden xl:block relative z-20 font-medium border-b border-white/5">
@@ -297,9 +357,7 @@ export default function Header() {
                         <Link
                           href={item.href}
                           className={`inline-flex items-center justify-center h-10 px-2 xl:px-3 2xl:px-4 text-[13px] 2xl:text-sm font-semibold whitespace-nowrap rounded-xl transition-all duration-200 leading-none focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none ${
-                            active
-                              ? 'bg-[#9b0035] text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]'
-                              : 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]'
+                            active ? activeClass : inactiveClass
                           }`}
                         >
                           {item.label}
@@ -308,9 +366,7 @@ export default function Header() {
                         <button
                           aria-expanded={activeDropdown === item.label}
                           className={`inline-flex items-center justify-center h-10 px-2 xl:px-3 2xl:px-4 text-[13px] 2xl:text-sm font-semibold whitespace-nowrap rounded-xl transition-all duration-200 leading-none focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none ${
-                            active || activeDropdown === item.label
-                              ? 'bg-[#9b0035] text-white shadow-[0_8px_18px_rgba(155,0,53,0.25)]'
-                              : 'bg-transparent text-[#111827] hover:bg-[rgba(155,0,53,0.08)] hover:text-[#9b0035]'
+                            active || activeDropdown === item.label ? activeClass : inactiveClass
                           }`}
                         >
                           {item.label}
@@ -321,56 +377,7 @@ export default function Header() {
                         </button>
                       )}
 
-                      {/* 3. MEGA MENU */}
-                      <AnimatePresence>
-                        {item.children && activeDropdown === item.label && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            transition={{ duration: 0.15 }}
-                            className="absolute top-full left-1/2 -translate-x-1/2 z-70 bg-white border-t-[4px] border-[#C99700] shadow-[0_20px_40px_rgba(0,0,0,0.12)] rounded-b-2xl"
-                            style={{ width: 'min(95vw, 1200px)', maxWidth: '1200px' }}
-                            onMouseEnter={() => handleDropdownEnter(item.label)}
-                            onMouseLeave={handleDropdownLeave}
-                          >
-                            <div className="w-full py-6 px-6 overflow-y-auto overflow-x-hidden" style={{ maxHeight: '70vh' }}>
-                              <div className={`grid gap-4 ${
-                                item.children.length <= 6 
-                                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' 
-                                  : item.children.length <= 10 
-                                    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' 
-                                    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-                              }`}>
-                                {item.children.map((child: any) => {
-                                  const Icon = child.icon || ArrowRight;
-                                  return (
-                                    <Link
-                                      key={child.href}
-                                      href={child.href}
-                                      className="flex items-start gap-4 p-5 h-auto rounded-xl border border-transparent hover:bg-[#F8F5F0] hover:border-[#8B0E2A]/40 hover:-translate-y-1 hover:shadow-md transition-all duration-200 group/item focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none"
-                                    >
-                                      <div className="w-11 h-11 rounded-lg bg-[#8B0E2A]/5 text-[#8B0E2A] flex items-center justify-center shrink-0 group-hover/item:scale-110 transition-transform duration-200 mt-0.5">
-                                        <Icon size={18} className="text-[#8B0E2A] group-hover/item:text-[#8B0E2A] transition-colors" />
-                                      </div>
-                                      <div>
-                                        <div className="text-[16px] font-bold text-[#111827] group-hover/item:text-[#8B0E2A] transition-colors leading-snug mb-0.5">
-                                          {child.label}
-                                        </div>
-                                        {child.desc && (
-                                          <div className="text-[14px] text-[#6B7280] leading-normal font-light">
-                                            {child.desc}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </Link>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      {/* NO dropdown here — rendered at viewport level below */}
                     </div>
                   );
                 })}
@@ -408,6 +415,84 @@ export default function Header() {
 
           </div>
         </div>
+
+        {/* 3. GOLD DIVIDER SUB-ELEMENT */}
+        <div ref={dividerRef} className="h-[4px] bg-[#C99700] w-full relative z-20" />
+
+        {/* 4. DYNAMIC SPACER PUSH-DOWN PANEL */}
+        <div
+          className="hidden xl:block overflow-hidden bg-white"
+          style={{
+            height: activeDropdown ? dropdownHeight : 0,
+            transition: prefersReducedMotion ? 'none' : 'height 200ms cubic-bezier(0.16, 1, 0.3, 1)'
+          }}
+        />
+
+        {/* ── VIEWPORT-LEVEL MEGA MENU PANEL ─────────────────────────────── */}
+        {/* Fixed to viewport, centered, never clipped by any parent */}
+        <AnimatePresence>
+          {activeItem?.children && activeDropdown && (
+            <motion.div
+              ref={dropdownRef}
+              key={activeDropdown}
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
+              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed z-[9999] left-0 right-0 border-t border-gray-100 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] bg-white"
+              style={{ top: dividerBottom }}
+              onMouseEnter={() => activeDropdown && handleDropdownEnter(activeDropdown)}
+              onMouseLeave={handleDropdownLeave}
+            >
+              {/* Centering wrapper — never overflows viewport */}
+              <div
+                className="mx-auto bg-white rounded-b-2xl"
+                style={{ width: 'min(95vw, 1200px)' }}
+              >
+                <div
+                  className="w-full py-6 px-6 overflow-y-auto overflow-x-hidden"
+                  style={{ maxHeight: '70vh' }}
+                >
+                  <div
+                    className={`grid gap-4 ${
+                      activeItem.children!.length <= 6
+                        ? 'grid-cols-2 lg:grid-cols-3'
+                        : activeItem.children!.length <= 9
+                          ? 'grid-cols-2 lg:grid-cols-3'
+                          : 'grid-cols-2 lg:grid-cols-4'
+                    }`}
+                  >
+                    {activeItem.children!.map((child: any) => {
+                      const Icon = child.icon || ArrowRight;
+                      return (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className="flex items-start gap-4 p-5 rounded-xl border border-transparent hover:bg-[#F8F5F0] hover:border-[#8B0E2A]/40 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 group/item focus-visible:ring-2 focus-visible:ring-[#9b0035] focus-visible:ring-offset-2 focus:outline-none"
+                          onClick={() => setActiveDropdown(null)}
+                        >
+                          <div className="w-11 h-11 rounded-lg bg-[#8B0E2A]/5 text-[#8B0E2A] flex items-center justify-center shrink-0 group-hover/item:bg-[#8B0E2A] group-hover/item:text-white transition-all duration-200 mt-0.5">
+                            <Icon size={18} />
+                          </div>
+                          <div>
+                            <div className="text-[15px] font-bold text-[#111827] group-hover/item:text-[#8B0E2A] transition-colors leading-snug mb-0.5">
+                              {child.label}
+                            </div>
+                            {child.desc && (
+                              <div className="text-[13px] text-[#6B7280] leading-normal font-light">
+                                {child.desc}
+                              </div>
+                            )}
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* 5. MOBILE Drawer Collapsible Accordion */}

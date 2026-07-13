@@ -60,6 +60,27 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
   const isPrincipal = slug === 'principal-message';
   const members = governanceMembers[slug] || [];
 
+  // Helper to extract principal name dynamically from CMS section HTML text
+  const getPrincipalName = () => {
+    for (const s of sections) {
+      if (s.type === 'RichText' && s.data?.content) {
+        const content = s.data.content;
+        const strongMatches = content.match(/<strong>(.*?)<\/strong>/g);
+        if (strongMatches) {
+          for (let i = strongMatches.length - 1; i >= 0; i--) {
+            const match = strongMatches[i].replace(/<\/?strong>/g, '').trim();
+            if (match.includes('Prof.') || match.includes('Dr.') || match.includes('Verma') || match.includes('Sharma')) {
+              return match;
+            }
+          }
+        }
+      }
+    }
+    return 'Prof. K.D. Verma';
+  };
+
+  const principalName = getPrincipalName();
+
   if (isPrincipal) {
     return (
       <div className="space-y-8">
@@ -91,7 +112,7 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
                 className="object-cover"
               />
             </div>
-            <h3 className="font-heading font-bold text-lg text-[#111111] mb-1">Dr. S. K. Verma</h3>
+            <h3 className="font-heading font-bold text-lg text-[#111111] mb-1">{principalName}</h3>
             <p className="text-[10px] font-bold text-[#B8860B] uppercase tracking-wider mb-3">Principal, NREC College Khurja</p>
             <div className="space-y-2 pt-4 border-t border-gray-100">
               <a href="tel:+915738200001" className="flex items-center justify-center gap-2 text-xs text-gray-500 hover:text-[#8B0E2A] transition-colors">
@@ -117,14 +138,14 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
                 Official Desk Message — 2025–26
               </span>
               <div className="w-10 h-[2px] bg-[#B8860B] rounded" />
-              <div className="text-gray-600 text-[15px] leading-relaxed font-light space-y-5">
+              <div className="text-gray-700 text-[15.5px] md:text-[16px] lg:text-[17px] leading-[1.85] font-normal space-y-5">
                 <CmsRenderer sections={sections} />
               </div>
               
               {/* Signature Block */}
               <div className="pt-8 border-t border-gray-100 mt-8 flex items-end justify-between">
                 <div>
-                  <div className="font-serif italic text-lg text-gray-800 mb-0.5">Dr. S. K. Verma</div>
+                  <div className="font-serif italic text-lg text-gray-800 mb-0.5">{principalName}</div>
                   <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                     Principal, NREC College Khurja Administration
                   </div>
@@ -220,8 +241,44 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
 
       {/* CMS Sections — shown if additional info exists */}
       {sections.length > 0 && (
-        <div className="bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-          <CmsRenderer sections={sections} />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* Left Column: Archive Content */}
+          <div className="lg:col-span-8 bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)] prose max-w-none text-gray-700 leading-relaxed font-light text-[15px]">
+            <CmsRenderer sections={sections} />
+          </div>
+
+          {/* Right Column: Governance Sidebar */}
+          <div className="lg:col-span-4 space-y-6 sticky top-28">
+            {/* Administration Desk Callout */}
+            <div className="bg-[#8B0E2A]/5 border border-[#8B0E2A]/10 rounded-2xl p-6 space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B0E2A] block">Office Desk Location</span>
+              <h4 className="font-heading font-bold text-gray-900 text-sm">Administrative Registry</h4>
+              <p className="text-xs text-gray-500 font-light leading-relaxed">
+                NREC administrative offices sit in the main heritage block, open daily during working hours.
+              </p>
+            </div>
+
+            {/* Quick Policy Highlights */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-3">
+              <h4 className="font-heading font-bold text-sm text-gray-900 uppercase tracking-wider pb-2 border-b border-gray-50">
+                Governance Charter
+              </h4>
+              <ul className="text-xs text-gray-500 font-light space-y-3">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]" />
+                  Annual Governing Body Resolutions
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#8B0E2A]" />
+                  Executive Management Protocols
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]" />
+                  CCS University Compliance Audit
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       )}
 

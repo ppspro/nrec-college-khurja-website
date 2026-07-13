@@ -26,23 +26,23 @@ export default function SectionHeader({
       )}
     >
       {label && (
-        <span className="text-[11px] font-bold tracking-[0.25em] uppercase text-[#B8860B] mb-2.5 block">
+        <span className="section-label block">
           {label}
         </span>
       )}
-      <h2 className="font-heading font-black text-2xl sm:text-3xl lg:text-4xl text-[#111111] leading-tight tracking-tight relative pb-4">
+      <h2 className="section-title relative pb-2 inline-block">
         {title}
-        <span
+        <div
           className={clsx(
-            'absolute bottom-0 h-[3px] bg-[#8B0E2A] rounded-full w-12',
-            align === 'center' && 'left-1/2 -translate-x-1/2',
-            align === 'right' && 'right-0',
-            align === 'left' && 'left-0'
+            'divider-accent',
+            align === 'center' && 'mx-auto',
+            align === 'right' && 'ml-auto mr-0',
+            align === 'left' && 'mr-auto ml-0'
           )}
         />
       </h2>
       {description && (
-        <p className="mt-4 text-[#666666] leading-relaxed max-w-2xl font-light text-base">
+        <p className="section-desc mt-2">
           {description}
         </p>
       )}

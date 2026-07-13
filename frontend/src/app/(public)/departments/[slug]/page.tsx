@@ -9,7 +9,7 @@ import { API_URL as API, uploadsUrl } from '@/lib/api';
 import FacultyCard from '@/components/ui/FacultyCard';
 
 
-export default function DepartmentDetailPage({ params }: { params: Promise<{ slug: string }> | { slug: string } }) {
+export default function DepartmentDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const [dept, setDept] = useState<any>(null);
   const [deptFaculty, setDeptFaculty] = useState<Faculty[]>([]);
   const [deptCourses, setDeptCourses] = useState<Course[]>([]);

@@ -15,7 +15,7 @@ export default function UpcomingEvents({ events }: UpcomingEventsProps) {
   if (!events || events.length === 0) return null;
 
   return (
-    <section className="bg-white section-py relative overflow-hidden">
+    <section className="bg-[#FAF9F5]/50 section-py relative overflow-hidden border-y border-gray-100/60">
       <div className="container-nrec relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <SectionTitle

@@ -38,7 +38,7 @@ export default function DepartmentsSection({ departments }: DepartmentsSectionPr
   if (!displayDepts || displayDepts.length === 0) return null;
 
   return (
-    <section className="bg-white section-py">
+    <section className="bg-[#FAF9F5]/50 section-py border-y border-gray-100/60">
       <div className="container-nrec">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <SectionTitle

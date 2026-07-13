@@ -55,7 +55,7 @@ export default function CollegeStats({ stats }: CollegeStatsProps) {
       }));
 
   return (
-    <section className="relative z-30 pt-16 md:pt-24 pb-16 md:pb-24 bg-[#FAF9F5]/40 border-b border-gray-100 overflow-hidden">
+    <section className="relative z-30 section-py bg-[#FAF9F5]/40 border-b border-gray-100 overflow-hidden">
       <div className="container-nrec">
         <StatsBanner stats={displayStats} />
       </div>

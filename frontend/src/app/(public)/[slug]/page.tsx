@@ -39,7 +39,7 @@ function resolveTemplate(slug: string) {
   return GenericTemplate;
 }
 
-export default async function GenericPage({ params }: { params: Promise<{ slug: string }> | { slug: string } }) {
+export default async function GenericPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
   const page = await getPage(slug);

@@ -10,7 +10,7 @@ import { API_URL as API } from '@/lib/api';
 
 const LEVEL_COLORS: Record<string, string> = { UG: '#2563EB', PG: '#8B0E2A', Diploma: '#059669', Certificate: '#D97706', PhD: '#7C3AED' };
 
-export default function CourseDetailPage({ params }: { params: Promise<{ slug: string }> | { slug: string } }) {
+export default function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const [course, setCourse] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);

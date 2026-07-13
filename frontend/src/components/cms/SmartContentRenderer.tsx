@@ -74,7 +74,7 @@ export default function SmartContentRenderer({ content }: SmartContentRendererPr
             <div className="w-6 h-6 rounded bg-[#8B0E2A]/10 text-[#8B0E2A] flex items-center justify-center shrink-0 mt-0.5">
               <CheckCircle size={13} />
             </div>
-            <p className="text-gray-600 text-xs sm:text-sm font-light leading-relaxed">{item}</p>
+            <p className="text-gray-700 text-[15.5px] md:text-[16px] lg:text-[17px] font-normal leading-[1.85]">{item}</p>
           </div>
         ))}
       </div>
@@ -95,11 +95,11 @@ export default function SmartContentRenderer({ content }: SmartContentRendererPr
 
           return (
             <div key={idx} className="space-y-4">
-              <p className="text-gray-800 font-bold text-sm sm:text-md leading-relaxed">
+              <p className="text-gray-800 font-semibold text-[15.5px] md:text-[16px] lg:text-[17px] leading-[1.85]">
                 {intro}…
               </p>
               <div className="bg-[#F8F5F0]/50 border-l-4 border-[#B8860B] p-4 rounded-r-xl">
-                <p className="text-gray-500 text-xs sm:text-sm leading-relaxed font-light">
+                <p className="text-gray-600 text-[15.5px] md:text-[16px] lg:text-[17px] leading-[1.85] font-normal">
                   {remainder}
                 </p>
               </div>
@@ -108,7 +108,7 @@ export default function SmartContentRenderer({ content }: SmartContentRendererPr
         }
 
         return (
-          <p key={idx} className="text-gray-600 text-xs sm:text-sm leading-relaxed font-light last:mb-0">
+          <p key={idx} className="text-gray-700 text-[15.5px] md:text-[16px] lg:text-[17px] leading-[1.85] font-normal last:mb-0">
             {block}
           </p>
         );

@@ -93,11 +93,26 @@ body {
   font-family: var(--font-body);
   color: var(--color-text);
   background: var(--color-bg);
-  line-height: 1.75;
+  line-height: 1.85;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  font-size: clamp(0.9375rem, 0.15vw + 0.8875rem, 1rem); /* Fluid body size */
+  font-size: clamp(0.96875rem, 0.2vw + 0.925rem, 1.125rem); /* Fluid body size (15.5px - 18px) */
+}
+
+/* Typography overrides for prose and main content blocks */
+.prose p, 
+.prose li,
+.prose ul,
+.prose ol {
+  font-size: clamp(0.96875rem, 0.2vw + 0.925rem, 1.125rem) !important;
+  line-height: 1.85 !important;
+  font-weight: 400 !important;
+  color: var(--color-text) !important;
+}
+.prose li {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 /* ═══════ Typography Scale & Rendering ═══════ */
@@ -561,7 +576,7 @@ img { max-width: 100%; height: auto; display: block; }
 .page-banner {
   background: linear-gradient(135deg, #0A0A0A 0%, #17070E 50%, #08030B 100%);
   color: white;
-  padding: clamp(4.5rem, 6vw, 6.5rem) 0 clamp(4rem, 5.5vw, 5.75rem);
+  padding: clamp(8.5rem, 10vw, 10.5rem) 0 clamp(4rem, 5.5vw, 5.75rem);
   position: relative;
   overflow: hidden;
 }
@@ -973,4 +988,40 @@ html.dark .badge-info { background: oklch(95% 0.05 240) !important; color: oklch
     scroll-behavior: auto !important;
     transform: none !important;
   }
+}
+
+/* Ensure headings inside text-white container or with text-white class are white */
+.text-white h1,
+.text-white h2,
+.text-white h3,
+.text-white h4,
+.text-white h5,
+.text-white h6,
+h1.text-white,
+h2.text-white,
+h3.text-white,
+h4.text-white,
+h5.text-white,
+h6.text-white {
+  color: #ffffff !important;
+}
+.text-gray-300 h1,
+.text-gray-300 h2,
+.text-gray-300 h3,
+.text-gray-300 h4,
+h1.text-gray-300,
+h2.text-gray-300,
+h3.text-gray-300,
+h4.text-gray-300 {
+  color: #d1d5db !important;
+}
+.text-gray-100 h1,
+.text-gray-100 h2,
+.text-gray-100 h3,
+.text-gray-100 h4,
+h1.text-gray-100,
+h2.text-gray-100,
+h3.text-gray-100,
+h4.text-gray-100 {
+  color: #f3f4f6 !important;
 }

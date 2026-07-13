@@ -19,15 +19,15 @@ export default function EmptyState({
   action,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-      <div className="w-20 h-20 rounded-2xl bg-[#F3F4F6] flex items-center justify-center mb-6">
-        {icon || <Inbox size={32} className="text-[#6B7280]" />}
+    <div className="card max-w-lg mx-auto bg-[#FAF9F5]/80 border border-gray-100 shadow-sm flex flex-col items-center justify-center py-12 px-8 text-center rounded-2xl">
+      <div className="w-16 h-16 rounded-xl bg-[#8B0E2A]/5 text-[#8B0E2A] flex items-center justify-center mb-6 shadow-sm">
+        {icon || <Inbox size={28} className="text-[#8B0E2A]" />}
       </div>
-      <h3 className="font-heading font-bold text-xl text-[#111111] mb-2">{title}</h3>
-      <p className="text-[#6B7280] text-sm max-w-md leading-relaxed">{description}</p>
+      <h3 className="font-heading font-bold text-lg text-gray-900 mb-2">{title}</h3>
+      <p className="text-gray-500 text-[14px] max-w-sm leading-relaxed">{description}</p>
       {action && <div className="mt-6">{action}</div>}
       {!action && actionLabel && actionHref && (
-        <Link href={actionHref} className="btn btn-primary btn-md mt-6">
+        <Link href={actionHref} className="btn btn-primary btn-md mt-6 rounded-full">
           {actionLabel}
         </Link>
       )}

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CmsRenderer from '@/components/cms/CmsRenderer';
-import { FileText, Download, Search, Filter } from 'lucide-react';
+import { FileText, Download, Search } from 'lucide-react';
+import { API_URL, API_BASE_URL } from '@/lib/api';
 
 interface DocumentTemplateProps {
   slug: string;
@@ -12,18 +13,44 @@ interface DocumentTemplateProps {
 export default function DocumentTemplate({ slug, sections }: DocumentTemplateProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [documents, setDocuments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const mockDocuments = [
-    { title: 'Academic Calendar Session 2026-27', type: 'PDF', size: '1.2 MB', date: '2026-07-01' },
-    { title: 'NREC Anti-Ragging Policy Circular', type: 'PDF', size: '840 KB', date: '2026-06-15' },
-    { title: 'CCS University Examination Registration Form', type: 'DOCX', size: '320 KB', date: '2026-06-10' },
-  ];
+  useEffect(() => {
+    fetch(`${API_URL}/downloads`)
+      .then(res => res.ok ? res.json() : { downloads: [] })
+      .then(data => {
+        if (data.downloads) {
+          setDocuments(data.downloads);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
-  const filteredDocs = mockDocuments.filter(doc => {
-    const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterType === 'all' || doc.type.toLowerCase() === filterType.toLowerCase();
-    return matchesSearch && matchesFilter;
-  });
+  // Filter based on active template slug matching category names
+  const getFilteredDocs = () => {
+    let list = documents;
+    
+    // Simple category mapping based on slug
+    if (slug.includes('exam')) {
+      list = documents.filter(d => d.category === 'Examination Forms');
+    } else if (slug.includes('admission')) {
+      list = documents.filter(d => d.category === 'Admission Forms');
+    } else if (slug.includes('calendar')) {
+      list = documents.filter(d => d.category === 'Academic Calendar');
+    }
+
+    // Apply search and fileType filter
+    return list.filter(doc => {
+      const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase());
+      const fileExt = doc.fileType?.toLowerCase() || '';
+      const matchesFilter = filterType === 'all' || fileExt === filterType.toLowerCase() || (filterType === 'pdf' && fileExt.includes('pdf'));
+      return matchesSearch && matchesFilter;
+    });
+  };
+
+  const filteredDocs = getFilteredDocs();
 
   return (
     <div className="space-y-8">
@@ -36,7 +63,7 @@ export default function DocumentTemplate({ slug, sections }: DocumentTemplatePro
         <span className="text-[10px] uppercase tracking-wider text-[#B8860B] font-bold block mb-1">
           NREC Registry Downloads
         </span>
-        <h3 className="font-heading font-black text-2xl">Official Institutional Document Portal</h3>
+        <h3 className="font-heading font-black text-2xl !text-white">Official Institutional Document Portal</h3>
         <p className="text-gray-400 text-xs font-light max-w-xl mt-2 leading-relaxed">
           Authorized circulars, admission brochures, governing guidelines, and official registry forms.
         </p>
@@ -82,37 +109,76 @@ export default function DocumentTemplate({ slug, sections }: DocumentTemplatePro
 
         {/* Document list */}
         <div className="divide-y divide-gray-100">
-          {filteredDocs.map((doc, index) => (
-            <div key={index} className="py-4 flex items-center justify-between gap-4 hover:bg-gray-50/50 px-2 rounded-xl transition-all">
-              <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-lg bg-[#8B0E2A]/5 text-[#8B0E2A] flex items-center justify-center shrink-0">
-                  <FileText size={18} />
-                </div>
-                <div>
-                  <h4 className="font-bold text-gray-800 text-xs sm:text-sm">{doc.title}</h4>
-                  <div className="flex items-center gap-3 text-[10px] text-gray-400 mt-1">
-                    <span>{doc.type} File</span>
-                    <span>&bull;</span>
-                    <span>{doc.size}</span>
-                    <span>&bull;</span>
-                    <span>Published {doc.date}</span>
+          {loading ? (
+            <div className="py-8 text-center text-xs text-gray-400 font-light">Loading official registry items...</div>
+          ) : filteredDocs.length === 0 ? (
+            <div className="py-8 text-center text-xs text-gray-400 font-light">No documents found matching criteria.</div>
+          ) : (
+            filteredDocs.map((doc, index) => (
+              <div key={index} className="py-4 flex items-center justify-between gap-4 hover:bg-gray-50/50 px-2 rounded-xl transition-all">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-[#8B0E2A]/5 text-[#8B0E2A] flex items-center justify-center shrink-0">
+                    <FileText size={18} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-800 text-xs sm:text-sm">{doc.title}</h4>
+                    <div className="flex items-center gap-3 text-[10px] text-gray-400 mt-1">
+                      <span className="uppercase">{doc.fileType || 'PDF'}</span>
+                      <span>&bull;</span>
+                      <span>{doc.fileSize || 'View File'}</span>
+                      <span>&bull;</span>
+                      <span>Published {new Date(doc.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <button className="flex items-center gap-1.5 bg-[#8B0E2A]/10 hover:bg-[#8B0E2A] text-[#8B0E2A] hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shrink-0">
-                <Download size={12} />
-                Download
-              </button>
-            </div>
-          ))}
+                <a
+                  href={`${API_BASE_URL}${doc.file}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 bg-[#8B0E2A]/10 hover:bg-[#8B0E2A] text-[#8B0E2A] hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shrink-0"
+                >
+                  <Download size={12} />
+                  Download
+                </a>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
       {/* Main CMS content */}
       {sections.length > 0 && (
-        <div className="bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-          <CmsRenderer sections={sections} />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* Left Column: Archive Content */}
+          <div className="lg:col-span-8 bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)] prose max-w-none text-gray-700 leading-relaxed font-light text-[15px]">
+            <CmsRenderer sections={sections} />
+          </div>
+
+          {/* Right Column: Registry Sidebar */}
+          <div className="lg:col-span-4 space-y-6 sticky top-28">
+            {/* Disclaimer Callout */}
+            <div className="bg-[#B8860B]/5 border border-[#B8860B]/20 rounded-2xl p-6 space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#B8860B] block">Registry Guidelines</span>
+              <h4 className="font-heading font-bold text-gray-900 text-sm">Official Copies</h4>
+              <p className="text-xs text-gray-500 font-light leading-relaxed">
+                Downloaded soft copies should match physical register files. For verified certified stamps, contact registry office counter.
+              </p>
+            </div>
+
+            {/* Quick Categories Panel */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-3">
+              <h4 className="font-heading font-bold text-sm text-gray-900 uppercase tracking-wider pb-2 border-b border-gray-50">
+                Document Sections
+              </h4>
+              <ul className="text-xs text-gray-500 font-light space-y-2">
+                <li>&bull; Academic Circulars</li>
+                <li>&bull; Admission Forms</li>
+                <li>&bull; Examination Rosters</li>
+                <li>&bull; Procurement Tenders</li>
+              </ul>
+            </div>
+          </div>
         </div>
       )}
 

@@ -10,7 +10,7 @@ import { uploadsUrl, API_URL } from '@/lib/api';
 
 
 
-export default function NewsDetailPage({ params }: { params: Promise<{ slug: string }> | { slug: string } }) {
+export default function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const [item, setItem] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);

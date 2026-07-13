@@ -125,8 +125,58 @@ export default function CampusTemplate({ slug, sections }: CampusTemplateProps) 
 
       {/* Main CMS Sections */}
       {sections.length > 0 && (
-        <div className="bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-          <CmsRenderer sections={sections} />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* Left Column: Archive Content */}
+          <div className="lg:col-span-8 bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)] prose max-w-none text-gray-700 leading-relaxed font-light text-[15px]">
+            <CmsRenderer sections={sections} />
+          </div>
+
+          {/* Right Column: Campus Information Sidebar */}
+          <div className="lg:col-span-4 space-y-6 sticky top-28">
+            {/* Opening Hours Callout */}
+            <div className="bg-[#8B0E2A]/5 border border-[#8B0E2A]/10 rounded-2xl p-6 space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B0E2A] block">Operating Hours</span>
+              <h4 className="font-heading font-bold text-gray-900 text-sm">General Timings</h4>
+              <p className="text-xs text-gray-500 font-light leading-relaxed">
+                NREC College campus and administration offices follow standardized operating schedules.
+              </p>
+              <div className="pt-2 text-xs space-y-1.5 text-gray-600 font-medium">
+                <div className="flex justify-between border-b border-[#8B0E2A]/10 pb-1">
+                  <span>Monday - Friday</span>
+                  <span>9:00 AM - 4:00 PM</span>
+                </div>
+                <div className="flex justify-between border-b border-[#8B0E2A]/10 pb-1">
+                  <span>Saturday</span>
+                  <span>9:00 AM - 1:30 PM</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Sunday</span>
+                  <span className="text-red-600 font-bold">Closed</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Facilities Panel */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-3">
+              <h4 className="font-heading font-bold text-sm text-gray-900 uppercase tracking-wider pb-2 border-b border-gray-50">
+                Amenities Directory
+              </h4>
+              <div className="flex flex-col gap-2.5 text-xs text-[#8B0E2A] font-bold">
+                <Link href="/library" className="hover:underline flex items-center gap-1.5">
+                  &bull; Central Library Center
+                </Link>
+                <Link href="/facilities/computer-lab" className="hover:underline flex items-center gap-1.5">
+                  &bull; IT &amp; Computer Laboratories
+                </Link>
+                <Link href="/facilities/hostel" className="hover:underline flex items-center gap-1.5">
+                  &bull; On-Campus Lodging Houses
+                </Link>
+                <Link href="/sports" className="hover:underline flex items-center gap-1.5">
+                  &bull; Playgrounds &amp; Sports Complex
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

@@ -143,8 +143,51 @@ export default function StudentTemplate({ slug, sections }: StudentTemplateProps
 
       {/* Main CMS Sections */}
       {sections.length > 0 && (
-        <div className="bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
-          <CmsRenderer sections={sections} />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* Left Column: Archive Content */}
+          <div className="lg:col-span-8 bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)] prose max-w-none text-gray-700 leading-relaxed font-light text-[15px]">
+            <CmsRenderer sections={sections} />
+          </div>
+
+          {/* Right Column: Admission Resources Sidebar */}
+          <div className="lg:col-span-4 space-y-6 sticky top-28">
+            {/* Helpdesk Callout */}
+            <div className="bg-[#8B0E2A]/5 border border-[#8B0E2A]/10 rounded-2xl p-6 space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B0E2A] block">Admission Helpline</span>
+              <h4 className="font-heading font-bold text-gray-900 text-sm">Need Assistance?</h4>
+              <p className="text-xs text-gray-500 font-light leading-relaxed">
+                Connect with the NREC Admissions registry office for specific registration query resolutions.
+              </p>
+              <div className="pt-2 text-xs space-y-1.5 text-gray-600 font-medium">
+                <div className="flex items-center gap-2">
+                  <span>☎</span>
+                  <a href="tel:+915738200001" className="hover:underline">+91-5738-200001</a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span>✉</span>
+                  <a href="mailto:admission@nreccollege.ac.in" className="hover:underline">admission@nreccollege.ac.in</a>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Links Panel */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-3">
+              <h4 className="font-heading font-bold text-sm text-gray-900 uppercase tracking-wider pb-2 border-b border-gray-50">
+                Related Information
+              </h4>
+              <div className="flex flex-col gap-2.5 text-xs text-[#8B0E2A] font-bold">
+                <Link href="/admission-rules" className="hover:underline flex items-center gap-1.5">
+                  &bull; Admission Rules Catalog
+                </Link>
+                <Link href="/fee-structure" className="hover:underline flex items-center gap-1.5">
+                  &bull; Tuition &amp; Fee Structure
+                </Link>
+                <Link href="/seats" className="hover:underline flex items-center gap-1.5">
+                  &bull; Allocated Seat Matrix
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
