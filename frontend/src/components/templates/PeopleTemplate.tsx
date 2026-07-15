@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import CmsRenderer from '@/components/cms/CmsRenderer';
 import { User, Shield, Briefcase, Quote, Award, Phone, Mail } from 'lucide-react';
 import SafeImage from '@/components/ui/SafeImage';
+import api, { uploadsUrl } from '@/lib/api';
 
 interface PeopleTemplateProps {
   slug: string;
@@ -16,7 +17,7 @@ const governanceMembers: Record<string, { name: string; role: string; committee?
     { name: 'Shri Harish Chandra Gupta', role: 'President', committee: 'Governing Council' },
     { name: 'Shri Amit Kumar Gupta', role: 'Secretary', committee: 'Governing Council' },
     { name: 'Shri Rajesh Sharma', role: 'Treasurer', committee: 'Finance Committee' },
-    { name: 'Dr. S. K. Verma', role: 'Academic Member', committee: 'Academic Council' },
+    { name: 'Dr. Sanjeev Kumar Singh', role: 'Academic Member', committee: 'Academic Council' },
     { name: 'Dr. Pradeep Kumar', role: 'Member', committee: 'Governing Council' },
     { name: 'Shri Vipin Garg', role: 'Member', committee: 'External Nominee' },
   ],
@@ -24,10 +25,10 @@ const governanceMembers: Record<string, { name: string; role: string; committee?
     { name: 'Shri Harish Chandra Gupta', role: 'President', committee: 'Management Committee' },
     { name: 'Shri Amit Kumar Gupta', role: 'Vice President', committee: 'Executive Board' },
     { name: 'Shri Rajesh Sharma', role: 'Secretary', committee: 'Administration' },
-    { name: 'Dr. S. K. Verma', role: 'Joint Secretary', committee: 'Academics' },
+    { name: 'Dr. Sanjeev Kumar Singh', role: 'Joint Secretary', committee: 'Academics' },
   ],
   'college-committee': [
-    { name: 'Dr. S. K. Verma', role: 'Convenor', committee: 'Internal Quality Cell' },
+    { name: 'Dr. Sanjeev Kumar Singh', role: 'Convenor', committee: 'Internal Quality Cell' },
     { name: 'Dr. Pradeep Kumar', role: 'IQAC Coordinator', committee: 'Quality Assurance' },
     { name: 'Dr. A. K. Singh', role: 'Anti-Ragging Nodal Officer', committee: 'Discipline Committee' },
     { name: 'Dr. Anita Rani', role: 'Women\'s Cell Convenor', committee: 'Women\'s Welfare Cell' },
@@ -60,28 +61,47 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
   const isPrincipal = slug === 'principal-message';
   const members = governanceMembers[slug] || [];
 
-  // Helper to extract principal name dynamically from CMS section HTML text
-  const getPrincipalName = () => {
-    for (const s of sections) {
-      if (s.type === 'RichText' && s.data?.content) {
-        const content = s.data.content;
-        const strongMatches = content.match(/<strong>(.*?)<\/strong>/g);
-        if (strongMatches) {
-          for (let i = strongMatches.length - 1; i >= 0; i--) {
-            const match = strongMatches[i].replace(/<\/?strong>/g, '').trim();
-            if (match.includes('Prof.') || match.includes('Dr.') || match.includes('Verma') || match.includes('Sharma')) {
-              return match;
-            }
+  const [principalInfo, setPrincipalInfo] = useState<any>(null);
+  const [loading, setLoading] = useState(isPrincipal);
+
+  useEffect(() => {
+    if (isPrincipal) {
+      api.get('/faculty/principal/info')
+        .then((res) => {
+          if (res.data.success && res.data.principal) {
+            setPrincipalInfo(res.data.principal);
           }
-        }
-      }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
     }
-    return 'Prof. K.D. Verma';
+  }, [isPrincipal]);
+
+  const principalName = principalInfo?.name || 'Principal';
+  const principalImage = principalInfo?.photo ? uploadsUrl(principalInfo.photo) : (principalInfo?.avatar || '');
+  const principalEmail = principalInfo?.email || '';
+  const principalPhone = principalInfo?.phone || '';
+
+  const getMemberDisplayName = (name: string) => {
+    if (name === 'Dr. Sanjeev Kumar Singh' || name === 'Dr. S. K. Verma') {
+      return principalInfo?.name || 'Dr. Sanjeev Kumar Singh';
+    }
+    return name;
   };
 
-  const principalName = getPrincipalName();
-
   if (isPrincipal) {
+    if (loading) {
+      return (
+        <div className="space-y-8 animate-pulse">
+          <div className="w-full h-[220px] rounded-[28px] bg-gray-200" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            <div className="lg:col-span-4 h-80 rounded-[28px] bg-gray-200" />
+            <div className="lg:col-span-8 h-80 rounded-[28px] bg-gray-200" />
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-8">
         {/* Banner image */}
@@ -104,24 +124,36 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
           {/* Left Side: Principal Card */}
           <div className="lg:col-span-4 bg-white border border-gray-100 rounded-[28px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.02)] text-center sticky top-28">
             <div className="relative w-36 h-36 rounded-full mx-auto overflow-hidden bg-gray-50 border-4 border-[#8B0E2A]/20 mb-5">
-              <SafeImage
-                src="/images/principal.png"
-                fallbackKey="avatar"
-                alt="Principal portrait"
-                fill
-                className="object-cover"
-              />
+              {principalImage ? (
+                <SafeImage
+                  src={principalImage}
+                  fallbackKey="avatar"
+                  alt="Principal portrait"
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center bg-[#8B0E2A]/5">
+                  <User size={36} className="text-[#8B0E2A]" />
+                </div>
+              )}
             </div>
             <h3 className="font-heading font-bold text-lg text-[#111111] mb-1">{principalName}</h3>
             <p className="text-[10px] font-bold text-[#B8860B] uppercase tracking-wider mb-3">Principal, NREC College Khurja</p>
-            <div className="space-y-2 pt-4 border-t border-gray-100">
-              <a href="tel:+915738200001" className="flex items-center justify-center gap-2 text-xs text-gray-500 hover:text-[#8B0E2A] transition-colors">
-                <Phone size={12} /> +91-5738-200001
-              </a>
-              <a href="mailto:principal@nreccollege.ac.in" className="flex items-center justify-center gap-2 text-xs text-gray-500 hover:text-[#8B0E2A] transition-colors">
-                <Mail size={12} /> principal@nreccollege.ac.in
-              </a>
-            </div>
+            {(principalPhone || principalEmail) && (
+              <div className="space-y-2 pt-4 border-t border-gray-100">
+                {principalPhone && (
+                  <a href={`tel:${principalPhone}`} className="flex items-center justify-center gap-2 text-xs text-gray-500 hover:text-[#8B0E2A] transition-colors">
+                    <Phone size={12} /> {principalPhone}
+                  </a>
+                )}
+                {principalEmail && (
+                  <a href={`mailto:${principalEmail}`} className="flex items-center justify-center gap-2 text-xs text-gray-500 hover:text-[#8B0E2A] transition-colors">
+                    <Mail size={12} /> {principalEmail}
+                  </a>
+                )}
+              </div>
+            )}
             <div className="mt-4 pt-4 border-t border-gray-50 text-[11px] text-gray-400 font-light leading-relaxed">
               Head of Administration &amp; Academic Council, NREC College Khurja
             </div>
@@ -213,7 +245,7 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
 
                 {/* Name */}
                 <h4 className="font-heading font-bold text-[#111111] text-sm mb-1 leading-snug">
-                  {member.name}
+                  {getMemberDisplayName(member.name)}
                 </h4>
 
                 {/* Role Badge */}

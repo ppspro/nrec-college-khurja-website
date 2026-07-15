@@ -10,8 +10,8 @@ import ToastContainer from '@/components/ui/ToastContainer';
 import { Department, Faculty } from '@/types';
 
 const DEFAULT = {
-  name: '', designation: '', qualification: '', department: '', email: '', phone: '',
-  biography: '', specialization: '', experience: '', publications: '', order: 0, isActive: true,
+  name: '', slug: '', designation: '', qualification: '', department: '', faculty: '', email: '', phone: '',
+  biography: '', specialization: '', experience: '', publications: '', officeHours: '', order: 0, isActive: true,
 };
 
 export default function FacultyForm() {
@@ -58,15 +58,18 @@ export default function FacultyForm() {
             if (f) {
               setForm({
                 name: f.name || '',
+                slug: f.slug || '',
                 designation: f.designation || '',
                 qualification: f.qualification || '',
                 department: typeof f.department === 'object' ? f.department?._id : f.department || '',
+                faculty: f.faculty || '',
                 email: f.email || '',
                 phone: f.phone || '',
                 biography: f.biography || '',
                 specialization: (f.specialization || []).join(', '),
                 experience: f.experience || '',
                 publications: (f.publications || []).join('\n'),
+                officeHours: f.officeHours || '',
                 order: f.order || 0,
                 isActive: f.isActive !== undefined ? f.isActive : true,
               });
@@ -158,10 +161,14 @@ export default function FacultyForm() {
 
       <form onSubmit={handleSubmit}>
         <Card hoverEffect={false} className="p-6 space-y-5 bg-white">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="form-label">Full Name *</label>
               <input required value={form.name} onChange={(e) => update('name', e.target.value)} className="form-input" placeholder="e.g. Dr. Ramesh Kumar" />
+            </div>
+            <div>
+              <label className="form-label">URL Slug (leave blank to auto-generate)</label>
+              <input value={form.slug} onChange={(e) => update('slug', e.target.value)} className="form-input" placeholder="dr-ramesh-kumar" />
             </div>
             <div>
               <label className="form-label">Designation / Role *</label>
@@ -169,7 +176,18 @@ export default function FacultyForm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="form-label">Faculty Category *</label>
+              <select required value={form.faculty} onChange={(e) => update('faculty', e.target.value)} className="form-input">
+                <option value="">Select Faculty Category</option>
+                <option value="Arts">Faculty of Arts</option>
+                <option value="Commerce">Faculty of Commerce</option>
+                <option value="Education">Faculty of Education</option>
+                <option value="Law">Faculty of Law</option>
+                <option value="Science">Faculty of Science</option>
+              </select>
+            </div>
             <div>
               <label className="form-label">Department *</label>
               <select required value={form.department} onChange={(e) => update('department', e.target.value)} className="form-input">
@@ -183,7 +201,7 @@ export default function FacultyForm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="form-label">Email Address</label>
               <input type="email" value={form.email} onChange={(e) => update('email', e.target.value)} className="form-input" />
@@ -191,6 +209,10 @@ export default function FacultyForm() {
             <div>
               <label className="form-label">Contact Phone</label>
               <input value={form.phone} onChange={(e) => update('phone', e.target.value)} className="form-input" />
+            </div>
+            <div>
+              <label className="form-label">Office Hours</label>
+              <input value={form.officeHours} onChange={(e) => update('officeHours', e.target.value)} className="form-input" placeholder="e.g. Mon-Fri, 11:00 AM - 1:00 PM" />
             </div>
           </div>
 

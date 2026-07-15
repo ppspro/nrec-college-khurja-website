@@ -100,9 +100,11 @@ export interface Course {
 export interface Faculty {
   _id: string;
   name: string;
+  slug: string;
   designation: string;
   qualification: string;
   department: Department | string;
+  faculty: string;
   email: string;
   phone: string;
   photo: string;
@@ -110,6 +112,7 @@ export interface Faculty {
   specialization: string[];
   experience: string;
   publications: string[];
+  officeHours?: string;
   order: number;
   isActive: boolean;
 }

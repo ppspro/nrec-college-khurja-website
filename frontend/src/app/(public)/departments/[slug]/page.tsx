@@ -142,6 +142,7 @@ export default function DepartmentDetailPage({ params }: { params: Promise<{ slu
                       <FacultyCard 
                         key={f._id}
                         name={f.name}
+                        slug={f.slug}
                         designation={f.designation}
                         email={f.email}
                         phone={f.phone}
