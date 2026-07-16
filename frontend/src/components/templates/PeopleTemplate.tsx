@@ -82,9 +82,33 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
   const principalEmail = principalInfo?.email || '';
   const principalPhone = principalInfo?.phone || '';
 
+  const processedSections = isPrincipal && principalInfo
+    ? sections.map((sec) => {
+        if (sec.type === 'RichText' && sec.data?.content) {
+          let content = sec.data.content;
+          // Replace old principal names dynamically
+          content = content.replace(
+            /(Prof\.|Dr\.)\s+(K\.?\s*D\.?\s*Sharma|K\.?\s*D\.?\s*Verma|S\.?\s*K\.?\s*Verma|Sanjeev\s+Kumar\s+Singh)/gi,
+            principalInfo.name
+          );
+          return {
+            ...sec,
+            data: { ...sec.data, content },
+          };
+        }
+        return sec;
+      })
+    : sections;
+
   const getMemberDisplayName = (name: string) => {
-    if (name === 'Dr. Sanjeev Kumar Singh' || name === 'Dr. S. K. Verma') {
-      return principalInfo?.name || 'Dr. Sanjeev Kumar Singh';
+    if (
+      name === 'Dr. Sanjeev Kumar Singh' ||
+      name === 'Dr. S. K. Verma' ||
+      name === 'Dr. K. D. Verma' ||
+      name === 'Dr. K. D. Sharma' ||
+      name.toLowerCase().includes('principal')
+    ) {
+      return principalInfo?.name || name;
     }
     return name;
   };
@@ -171,7 +195,7 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
               </span>
               <div className="w-10 h-[2px] bg-[#B8860B] rounded" />
               <div className="text-gray-700 text-[15.5px] md:text-[16px] lg:text-[17px] leading-[1.85] font-normal space-y-5">
-                <CmsRenderer sections={sections} />
+                <CmsRenderer sections={processedSections} />
               </div>
               
               {/* Signature Block */}
@@ -276,7 +300,7 @@ export default function PeopleTemplate({ slug, sections }: PeopleTemplateProps) 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Left Column: Archive Content */}
           <div className="lg:col-span-8 bg-white border border-gray-100 rounded-[28px] p-6 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.02)] prose max-w-none text-gray-700 leading-relaxed font-light text-[15px]">
-            <CmsRenderer sections={sections} />
+            <CmsRenderer sections={processedSections} />
           </div>
 
           {/* Right Column: Governance Sidebar */}

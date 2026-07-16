@@ -73,6 +73,7 @@ const defaultNavItems: NavItem[] = [
     children: [
       { label: 'Academics', href: '/academics', desc: 'Overview of academics' },
       { label: 'Departments', href: '/departments', desc: 'Arts, Science & Commerce' },
+      { label: 'Faculty Directory', href: '/faculty', desc: 'Scholars & teachers directories' },
       { label: 'Courses', href: '/courses', desc: 'UG, PG & Professional degrees' },
       { label: 'Syllabus', href: '/syllabus', desc: 'NEP syllabus downloads' },
       { label: 'Research', href: '/research', desc: 'Scholarly publications' },
@@ -455,11 +456,11 @@ export default function Header() {
                 >
                   <div
                     className={`grid gap-4 ${
-                      activeItem.children!.length <= 6
-                        ? 'grid-cols-2 lg:grid-cols-3'
-                        : activeItem.children!.length <= 9
-                          ? 'grid-cols-2 lg:grid-cols-3'
-                          : 'grid-cols-2 lg:grid-cols-4'
+                      activeItem.children!.length <= 5
+                        ? 'grid-cols-1 md:grid-cols-2'
+                        : activeItem.children!.length <= 8
+                          ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+                          : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'
                     }`}
                   >
                     {activeItem.children!.map((child: any) => {
