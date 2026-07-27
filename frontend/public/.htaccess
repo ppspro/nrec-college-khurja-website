@@ -1,8 +1,8 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Disable directory slash to allow .html serving
-  DirectorySlash Off
+  # Enable directory slash to allow proper folder index serving
+  DirectorySlash On
 
   # Prevent directory listing
   Options -Indexes
